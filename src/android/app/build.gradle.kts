@@ -28,7 +28,7 @@ android {
     namespace = "org.yuzu.yuzu_emu"
 
     compileSdkVersion = "android-34"
-    ndkVersion = "26.3.11579264"
+    ndkVersion = "28.0.12674087"
 
     buildFeatures {
         viewBinding = true
@@ -169,6 +169,20 @@ android {
                     "-DYUZU_USE_BUNDLED_FFMPEG=ON",
                     "-DYUZU_ENABLE_LTO=ON",
                     "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+                )
+
+                cFlags(
+                    "-O3",
+                    "-march=armv8.7a",
+                    "-pipe",
+                    "-flto=thin"
+                )
+
+                cppFlags(
+                    "-O3",
+                    "-march=armv8.7a",
+                    "-pipe",
+                    "-flto=thin"
                 )
 
                 abiFilters("arm64-v8a", "x86_64")
