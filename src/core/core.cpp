@@ -451,7 +451,6 @@ struct System::Impl {
             return Loader::ResultStatus::ErrorNotInitialized;
         return app_loader->ReadTitle(out);
     }
-
     void SetStatus(SystemResultStatus new_status, const char* details = nullptr) {
         status = new_status;
         if (details) {
