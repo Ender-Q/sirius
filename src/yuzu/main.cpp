@@ -490,6 +490,7 @@ GMainWindow::GMainWindow(std::unique_ptr<QtConfig> config_, bool has_broken_vulk
     QString game_path;
     bool has_gamepath = false;
     bool is_fullscreen = false;
+    bool is_qlaunch = false;
 
     for (int i = 1; i < args.size(); ++i) {
         // Preserves drag/drop functionality
@@ -504,7 +505,11 @@ GMainWindow::GMainWindow(std::unique_ptr<QtConfig> config_, bool has_broken_vulk
             is_fullscreen = true;
             continue;
         }
-
+        // Use QLaunch at startup
+        if (args[i] == QStringLiteral("-ql")) {
+            is_qlaunch = true;
+            continue;
+        }
         // Launch game with a specific user
         if (args[i] == QStringLiteral("-u")) {
             if (i >= args.size() - 1) {
@@ -562,7 +567,10 @@ GMainWindow::GMainWindow(std::unique_ptr<QtConfig> config_, bool has_broken_vulk
     if (has_gamepath || is_fullscreen) {
         ui->action_Fullscreen->setChecked(is_fullscreen);
     }
-
+    // Open HomeMenu
+    if (!has_gamepath && is_qlaunch) {
+        OnHomeMenu();
+    }
     if (!game_path.isEmpty()) {
         BootGame(game_path, ApplicationAppletParameters());
     }
