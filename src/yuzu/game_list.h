@@ -87,6 +87,7 @@ public:
     ~GameList() override;
 
     QString GetLastFilterResultItem() const;
+    void ClearList();
     void ClearFilter();
     void SetFilterFocus();
     void SetFilterVisible(bool visibility);
