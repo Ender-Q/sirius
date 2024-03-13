@@ -14,6 +14,7 @@
 
 #include "common/fs/fs.h"
 #include "common/fs/path_util.h"
+#include "common/logging/log.h"
 #include "core/core.h"
 #include "core/file_sys/patch_manager.h"
 #include "core/file_sys/xts_archive.h"
