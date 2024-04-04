@@ -62,7 +62,7 @@ public:
             {20401, nullptr, "SyncBlockedUserList"},
             {20500, nullptr, "GetProfileExtraList"},
             {20501, nullptr, "GetRelationship"},
-            {20600, nullptr, "GetUserPresenceView"},
+            {20600, &IFriendService::GetUserPresenceView, "GetUserPresenceView"},
             {20700, nullptr, "GetPlayHistoryList"},
             {20701, &IFriendService::GetPlayHistoryStatistics, "GetPlayHistoryStatistics"},
             {20800, &IFriendService::LoadUserSetting, "LoadUserSetting"},
@@ -266,7 +266,6 @@ private:
 
         IPC::ResponseBuilder rb{ctx, 3};
         rb.Push(ResultSuccess);
-        rb.Push(0);
     }
 
     void GetPlayHistoryStatistics(HLERequestContext& ctx) {
