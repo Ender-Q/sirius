@@ -20,7 +20,6 @@
 #include "common/scope_exit.h"
 #include "common/settings.h"
 #include "common/string_util.h"
-#include "common/telemetry.h"
 #include "core/core.h"
 #include "core/core_timing.h"
 #include "core/cpu_manager.h"
@@ -33,7 +32,6 @@
 #include "core/hle/service/am/service/library_applet_creator.h"
 #include "core/hle/service/filesystem/filesystem.h"
 #include "core/loader/loader.h"
-#include "core/telemetry_session.h"
 #include "frontend_common/config.h"
 #include "input_common/main.h"
 #include "network/network.h"
@@ -452,8 +450,6 @@ int main(int argc, char** argv) {
         }
         break;
     }
-
-    system.TelemetrySession().AddField(Common::Telemetry::FieldType::App, "Frontend", "SDL");
 
     if (use_multiplayer) {
         if (auto member = system.GetRoomNetwork().GetRoomMember().lock()) {

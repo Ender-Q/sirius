@@ -110,7 +110,6 @@ static FileSys::VirtualFile VfsDirectoryCreateFileWrapper(const FileSys::Virtual
 #include "common/x64/cpu_detect.h"
 #endif
 #include "common/settings.h"
-#include "common/telemetry.h"
 #include "core/core.h"
 #include "core/core_timing.h"
 #include "core/crypto/key_manager.h"
@@ -129,7 +128,6 @@ static FileSys::VirtualFile VfsDirectoryCreateFileWrapper(const FileSys::Virtual
 #include "core/hle/service/sm/sm.h"
 #include "core/loader/loader.h"
 #include "core/perf_stats.h"
-#include "core/telemetry_session.h"
 #include "frontend_common/config.h"
 #include "input_common/drivers/tas_input.h"
 #include "input_common/drivers/virtual_amiibo.h"
@@ -1853,7 +1851,6 @@ bool GMainWindow::LoadROM(const QString& filename, Service::AM::FrontendAppletPa
     }
     current_game_path = filename;
 
-    system->TelemetrySession().AddField(Common::Telemetry::FieldType::App, "Frontend", "Qt");
     return true;
 }
 
@@ -3539,8 +3536,6 @@ void GMainWindow::OnMenuReportCompatibility() {
 
     if (!Settings::values.yuzu_token.GetValue().empty() &&
         !Settings::values.yuzu_username.GetValue().empty()) {
-        CompatDB compatdb{system->TelemetrySession(), this};
-        compatdb.exec();
     } else {
         QMessageBox::critical(
             this, tr("Missing yuzu Account"),

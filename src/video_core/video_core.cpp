@@ -20,7 +20,6 @@ namespace {
 std::unique_ptr<VideoCore::RendererBase> CreateRenderer(
     Core::System& system, Core::Frontend::EmuWindow& emu_window, Tegra::GPU& gpu,
     std::unique_ptr<Core::Frontend::GraphicsContext> context) {
-    auto& telemetry_session = system.TelemetrySession();
     auto& device_memory = system.Host1x().MemoryManager();
 
     switch (Settings::values.renderer_backend.GetValue()) {
@@ -32,15 +31,15 @@ std::unique_ptr<VideoCore::RendererBase> CreateRenderer(
 
         // openGL, not supported on Apple so not bothering to include if macos
         case Settings::RendererBackend::OpenGL:
-        return std::make_unique<OpenGL::RendererOpenGL>(telemetry_session, emu_window,
-                                                        device_memory, gpu, std::move(context));
+        return std::make_unique<OpenGL::RendererOpenGL>(emu_window, device_memory, gpu,
+                                                        std::move(context));
 
 
         #endif
 
     case Settings::RendererBackend::Vulkan:
-        return std::make_unique<Vulkan::RendererVulkan>(telemetry_session, emu_window,
-                                                        device_memory, gpu, std::move(context));
+        return std::make_unique<Vulkan::RendererVulkan>(emu_window, device_memory, gpu,
+                                                        std::move(context));
     case Settings::RendererBackend::Null:
         return std::make_unique<Null::RendererNull>(emu_window, gpu, std::move(context));
     default:
