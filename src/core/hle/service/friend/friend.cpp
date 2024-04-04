@@ -248,6 +248,17 @@ private:
     }
 
     void GetReceivedFriendRequestCount(HLERequestContext& ctx) {
+        IPC::RequestParser rp{ctx};
+        [[maybe_unused]] const auto uuid = rp.PopRaw<Common::UUID>();
+
+        LOG_DEBUG(Service_Friend, "(STUBBED) called");
+
+        IPC::ResponseBuilder rb{ctx, 4};
+        rb.Push(ResultSuccess);
+        rb.Push(0);
+    }
+
+    void GetUserPresenceView(HLERequestContext& ctx) {
         LOG_DEBUG(Service_Friend, "(STUBBED) called");
 
         u8 buf[0xe0]{};
