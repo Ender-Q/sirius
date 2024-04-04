@@ -252,6 +252,7 @@ private:
 
         IPC::ResponseBuilder rb{ctx, 3};
         rb.Push(ResultSuccess);
+        rb.Push(0);
     }
 
     void GetPlayHistoryStatistics(HLERequestContext& ctx) {
