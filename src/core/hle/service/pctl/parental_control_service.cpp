@@ -106,6 +106,7 @@ IParentalControlService::IParentalControlService(Core::System& system_, Capabili
         {1955, nullptr, "GetBedtimeAlarmTime"}, // 18.0.0+
         {1956, nullptr, "GetBedtimeAlarmTimeHour"}, // 18.0.0+
         {1957, nullptr, "GetBedtimeAlarmTimeMinute"}, // 18.0.0+
+        {1967, nullptr, "GetBedtimeAlarmMinute"}, // 18.0.0+
         {2001, nullptr, "RequestPairingAsync"},
         {2002, nullptr, "FinishRequestPairing"},
         {2003, nullptr, "AuthorizePairingAsync"},
@@ -123,7 +124,7 @@ IParentalControlService::IParentalControlService(Core::System& system_, Capabili
         {2015, nullptr, "FinishSynchronizeParentalControlSettingsWithLastUpdated"},
         {2016, nullptr, "RequestUpdateExemptionListAsync"},
         {145601, nullptr, "GetPlayTimerSettingsVer2"}, // 18.0.0+
-        {195101, nullptr, "SetPlayTimerSettingsForDebugVer2"} // 18.0.0+
+        {195101, nullptr, "SetPlayTimerSettingsForDebugVer2"}, // 18.0.0+
     };
     // clang-format on
     RegisterHandlers(functions);
