@@ -165,6 +165,11 @@ endif()
 if (YUZU_USE_EXTERNAL_VULKAN_UTILITY_LIBRARIES)
     add_subdirectory(Vulkan-Utility-Libraries)
 endif()
+# SPIRV-Tools
+if (YUZU_USE_EXTERNAL_VULKAN_SPIRV_TOOLS)
+    add_subdirectory(SPIRV-Tools)
+endif()
+
 
 # TZDB (Time Zone Database)
 add_subdirectory(nx_tzdb)
