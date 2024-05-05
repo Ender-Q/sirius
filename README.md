@@ -22,6 +22,7 @@ It is written in C++ with portability in mind.
   <a href="#license">License</a>
 </p>
 
+ - Fixed controller UI being cut off at the bottom
 ## Development
 
 Most of the development happens on Codeberg. It's also where [our central repository](https://codeberg.org/yuzu-emu/yuzu) is hosted.
