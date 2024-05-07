@@ -448,10 +448,7 @@ GMainWindow::GMainWindow(std::unique_ptr<QtConfig> config_, bool has_broken_vulk
         UISettings::values.has_broken_vulkan = true;
 
         QMessageBox::warning(this, tr("Broken Vulkan Installation Detected"),
-                             tr("Vulkan initialization failed during boot.<br><br>Click <a "
-                                "href='https://yuzu-emu.org/wiki/faq/"
-                                "#yuzu-starts-with-the-error-broken-vulkan-installation-detected'>"
-                                "here for instructions to fix the issue</a>."));
+                             tr("Vulkan initialization failed during boot."));
 
 #ifdef HAS_OPENGL
         Settings::values.renderer_backend = Settings::RendererBackend::OpenGL;
@@ -1546,7 +1543,6 @@ void GMainWindow::ConnectMenuEvents() {
     connect_menu(ui->action_Pause, &GMainWindow::OnPauseContinueGame);
     connect_menu(ui->action_Stop, &GMainWindow::OnStopGame);
     connect_menu(ui->action_Report_Compatibility, &GMainWindow::OnMenuReportCompatibility);
-    connect_menu(ui->action_Open_Mods_Page, &GMainWindow::OnOpenModsPage);
     connect_menu(ui->action_Open_Quickstart_Guide, &GMainWindow::OnOpenQuickstartGuide);
     connect_menu(ui->action_Open_FAQ, &GMainWindow::OnOpenFAQ);
     connect_menu(ui->action_Restart, &GMainWindow::OnRestartGame);
@@ -3580,10 +3576,6 @@ void GMainWindow::OpenURL(const QUrl& url) {
         QMessageBox::warning(this, tr("Error opening URL"),
                              tr("Unable to open the URL \"%1\".").arg(url.toString()));
     }
-}
-
-void GMainWindow::OnOpenModsPage() {
-    OpenURL(QUrl(QStringLiteral("https://github.com/yuzu-emu/yuzu/wiki/Switch-Mods")));
 }
 
 void GMainWindow::OnOpenQuickstartGuide() {
