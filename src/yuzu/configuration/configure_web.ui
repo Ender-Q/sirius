@@ -50,13 +50,6 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="web_signup_link">
-            <property name="text">
-             <string>Sign up</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1" colspan="3">
            <widget class="QLabel" name="username"/>
           </item>
@@ -84,13 +77,6 @@
             </property>
             <property name="echoMode">
              <enum>QLineEdit::Password</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="web_token_info_link">
-            <property name="text">
-             <string>What is my token?</string>
             </property>
            </widget>
           </item>
