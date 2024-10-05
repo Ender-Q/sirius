@@ -184,7 +184,7 @@ struct fmt::formatter<Shader::Backend::GLASM::Id> {
         return ctx.begin();
     }
     template <typename FormatContext>
-    auto format(Shader::Backend::GLASM::Id id, FormatContext& ctx) {
+    auto format(Shader::Backend::GLASM::Id id, FormatContext& ctx) const {
         return Shader::Backend::GLASM::FormatTo<true>(ctx, id);
     }
 };
