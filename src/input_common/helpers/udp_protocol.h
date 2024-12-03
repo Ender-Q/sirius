@@ -13,6 +13,7 @@
 #endif
 
 #include <boost/crc.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 
 #ifdef _MSC_VER
 #pragma warning(pop)
@@ -69,7 +70,7 @@ Message<T> CreateMessage(const u32 magic, const T data, const u32 sender_id) {
     };
     Message<T> message{header, data};
     crc.process_bytes(&message, sizeof(Message<T>));
-    message.header.crc = crc.checksum();
+    message.header.crc = boost::numeric_cast<u32_le>(crc.checksum());
     return message;
 }
 
