@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright 2022 yuzu Emulator Project
+// SPDX-FileCopyrightText: Copyright 2022 yuzu Emulator Project & 2025 citron Homebrew Project
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #pragma once
@@ -13,7 +13,7 @@
 #include "common/polyfill_ranges.h"
 
 namespace AudioCore {
-constexpr u32 CurrentRevision = 13;
+constexpr u32 CurrentRevision = 18;
 
 enum class SupportTags {
     CommandProcessingTimeEstimatorVersion4,
@@ -44,8 +44,29 @@ enum class SupportTags {
     DelayChannelMappingChange,
     ReverbChannelMappingChange,
     I3dl2ReverbChannelMappingChange,
-
-    // Not a real tag, just here to get the count.
+    AudioOutAuto,
+    AudioInAuto,
+    AudioInFiltering,
+    AudioInUacSupport,
+    FinalOutputRecorderAuto,
+    FinalOutputRecorderWorkBuffer,
+    AudioRendererManualExecution,
+    AudioRendererVariableRate,
+    AudioRendererRevisionCheck,
+    AudioRendererVoiceDrop,
+    AudioDeviceNameAuto,
+    AudioDeviceInputEvent,
+    AudioDeviceOutputEvent,
+    AudioDeviceNotification,
+    AudioDeviceAutoVolumeTune,
+    HardwareOpusDecoderEx,
+    HardwareOpusMultiStream,
+    HardwareOpusLargeFrameSize,
+    AudioSystemMasterVolume,
+    AudioSystemInputVolume,
+    AudioSystemRecordVolume,
+    AudioSystemAutoMute,
+    AudioSystemHearingProtection,
     Size
 };
 
@@ -54,7 +75,6 @@ constexpr u32 GetRevisionNum(u32 user_revision) {
         user_revision -= Common::MakeMagic('R', 'E', 'V', '0');
         user_revision >>= 24;
     }
-
     return user_revision;
 };
 
@@ -88,6 +108,29 @@ constexpr bool CheckFeatureSupported(SupportTags tag, u32 user_revision) {
             {SupportTags::DelayChannelMappingChange, 11},
             {SupportTags::ReverbChannelMappingChange, 11},
             {SupportTags::I3dl2ReverbChannelMappingChange, 11},
+            {SupportTags::AudioOutAuto, 3},
+            {SupportTags::AudioInAuto, 3},
+            {SupportTags::AudioInFiltering, 3},
+            {SupportTags::AudioInUacSupport, 3},
+            {SupportTags::FinalOutputRecorderAuto, 3},
+            {SupportTags::FinalOutputRecorderWorkBuffer, 9},
+            {SupportTags::AudioRendererManualExecution, 3},
+            {SupportTags::AudioRendererVariableRate, 4},
+            {SupportTags::AudioRendererRevisionCheck, 4},
+            {SupportTags::AudioRendererVoiceDrop, 15},
+            {SupportTags::AudioDeviceNameAuto, 3},
+            {SupportTags::AudioDeviceInputEvent, 3},
+            {SupportTags::AudioDeviceOutputEvent, 3},
+            {SupportTags::AudioDeviceNotification, 17},
+            {SupportTags::AudioDeviceAutoVolumeTune, 18},
+            {SupportTags::HardwareOpusDecoderEx, 12},
+            {SupportTags::HardwareOpusMultiStream, 3},
+            {SupportTags::HardwareOpusLargeFrameSize, 12},
+            {SupportTags::AudioSystemMasterVolume, 4},
+            {SupportTags::AudioSystemInputVolume, 4},
+            {SupportTags::AudioSystemRecordVolume, 4},
+            {SupportTags::AudioSystemAutoMute, 13},
+            {SupportTags::AudioSystemHearingProtection, 14},
         }};
 
     const auto& feature =
