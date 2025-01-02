@@ -18,14 +18,12 @@ void ArmInterface::LogBacktrace(Kernel::KProcess* process) const {
     LOG_ERROR(Core_ARM, "");
 
     const auto backtrace = GetBacktraceFromContext(process, ctx);
+
     u64 last_address = 0;
-
     for (const auto& entry : backtrace) {
-
-        // Skip duplicate consecutive addresses
-        if (entry.address == last_address)
+        if (entry.address == last_address) {
             continue;
-
+        }
         LOG_ERROR(Core_ARM, "{:20}{:016X}    {:016X}    {:016X}    {}", entry.module, entry.address,
                   entry.original_address, entry.offset, entry.name);
 
