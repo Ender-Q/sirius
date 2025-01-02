@@ -93,7 +93,17 @@ bool DmaPusher::Step() {
             ProcessCommands(headers);
         };
 
-        if (Settings::IsGPULevelHigh() || (dma_state.method >= MacroRegistersStart)) {
+        // Only use unsafe reads for non-compute macro operations
+        if (Settings::IsGPULevelHigh()) {
+            const bool is_compute = (subchannel_type[dma_state.subchannel] ==
+                                   Engines::EngineTypes::KeplerCompute);
+
+            if (dma_state.method >= MacroRegistersStart && !is_compute) {
+                unsafe_process();
+                return true;
+            }
+
+            // Always use safe reads for compute operations
             safe_process();
             return true;
         }
