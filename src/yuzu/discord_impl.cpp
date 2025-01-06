@@ -24,7 +24,7 @@ DiscordImpl::DiscordImpl(Core::System& system_) : system{system_} {
     DiscordEventHandlers handlers{};
     // The number is the client ID for yuzu, it's used for images and the
     // application name
-    Discord_Initialize("712465656758665259", &handlers, 1, nullptr);
+    Discord_Initialize("1322413013248118888", &handlers, 1, nullptr);
 }
 
 DiscordImpl::~DiscordImpl() {
@@ -36,44 +36,29 @@ void DiscordImpl::Pause() {
     Discord_ClearPresence();
 }
 
-std::string DiscordImpl::GetGameString(const std::string& title) {
-    // Convert to lowercase
-    std::string icon_name = Common::ToLower(title);
-
-    // Replace spaces with dashes
-    std::replace(icon_name.begin(), icon_name.end(), ' ', '-');
-
-    // Remove non-alphanumeric characters but keep dashes
-    std::erase_if(icon_name, [](char c) { return !std::isalnum(c) && c != '-'; });
-
-    // Remove dashes from the start and end of the string
-    icon_name.erase(icon_name.begin(), std::find_if(icon_name.begin(), icon_name.end(),
-                                                    [](int ch) { return ch != '-'; }));
-    icon_name.erase(
-        std::find_if(icon_name.rbegin(), icon_name.rend(), [](int ch) { return ch != '-'; }).base(),
-        icon_name.end());
-
-    // Remove double dashes
-    icon_name.erase(std::unique(icon_name.begin(), icon_name.end(),
-                                [](char a, char b) { return a == '-' && b == '-'; }),
-                    icon_name.end());
-
-    return icon_name;
-}
-
 void DiscordImpl::UpdateGameStatus(bool use_default) {
     const std::string default_text = "yuzu is an emulator for the Nintendo Switch";
     const std::string default_image = "yuzu_logo";
-    const std::string url = use_default ? default_image : game_url;
+    const std::string tinfoil_base_url = "https://tinfoil.media/ti/";
     s64 start_time = std::chrono::duration_cast<std::chrono::seconds>(
                          std::chrono::system_clock::now().time_since_epoch())
                          .count();
     DiscordRichPresence presence{};
 
-    presence.largeImageKey = url.c_str();
+    // Store the URL string to prevent it from being destroyed
+    if (!game_title_id.empty()) {
+        game_url = fmt::format("{}{}/128/128", tinfoil_base_url, game_title_id);
+        // Make sure the string stays alive for the duration of the presence
+        cached_url = game_url;
+        presence.largeImageKey = cached_url.c_str();
+    } else {
+        presence.largeImageKey = cached_url.c_str();
+    }
+
     presence.largeImageText = game_title.c_str();
     presence.smallImageKey = default_image.c_str();
     presence.smallImageText = default_text.c_str();
+    // Remove title ID from display, only show game title
     presence.state = game_title.c_str();
     presence.details = "Currently in game";
     presence.startTimestamp = start_time;
@@ -86,20 +71,28 @@ void DiscordImpl::Update() {
 
     if (system.IsPoweredOn()) {
         system.GetAppLoader().ReadTitle(game_title);
+        system.GetAppLoader().ReadProgramId(program_id);
+        game_title_id = fmt::format("{:016X}", program_id);
 
-        // Used to format Icon URL for yuzu website game compatibility page
-        std::string icon_name = GetGameString(game_title);
-        game_url = fmt::format("https://yuzu-emu.org/images/game/boxart/{}.png", icon_name);
+        fmt::print("Title ID: {}\n", game_title_id);
 
         QNetworkAccessManager manager;
         QNetworkRequest request;
-        request.setUrl(QUrl(QString::fromStdString(game_url)));
-        request.setTransferTimeout(3000);
+        request.setUrl(QUrl(QString::fromStdString(
+            fmt::format("https://tinfoil.media/ti/{}/128/128", game_title_id))));
+        request.setTransferTimeout(10000);
         QNetworkReply* reply = manager.head(request);
         QEventLoop request_event_loop;
         QObject::connect(reply, &QNetworkReply::finished, &request_event_loop, &QEventLoop::quit);
         request_event_loop.exec();
+
+        if (reply->error()) {
+            fmt::print("Failed to fetch game image: {} ({})\n", reply->errorString().toStdString(),
+                       program_id);
+        }
+
         UpdateGameStatus(reply->error());
+        reply->deleteLater();
         return;
     }
 

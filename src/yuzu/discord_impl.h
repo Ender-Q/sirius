@@ -20,13 +20,15 @@ public:
     void Update() override;
 
 private:
-    std::string GetGameString(const std::string& title);
     void UpdateGameStatus(bool use_default);
 
     std::string game_url{};
     std::string game_title{};
+    std::string game_title_id{};
+    std::string cached_url;
 
     Core::System& system;
+    u64 program_id = 0;
 };
 
 } // namespace DiscordRPC
