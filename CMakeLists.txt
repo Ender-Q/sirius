@@ -43,6 +43,8 @@ option(YUZU_USE_EXTERNAL_VULKAN_UTILITY_LIBRARIES "Use Vulkan-Utility-Libraries 
 
 option(YUZU_USE_EXTERNAL_VULKAN_SPIRV_TOOLS "Use SPIRV-Tools from externals" ON)
 
+option(YUZU_USE_LLVM_DEMANGLE "Use LLVM Demangle" ON)
+
 option(YUZU_USE_QT_MULTIMEDIA "Use QtMultimedia for Camera" OFF)
 
 option(YUZU_USE_QT_WEB_ENGINE "Use QtWebEngine for web applet implementation" OFF)
@@ -300,7 +302,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 find_package(Boost 1.79.0 REQUIRED context)
 find_package(enet 1.3 MODULE)
 find_package(fmt 11 REQUIRED)
-find_package(LLVM 17.0.2 MODULE COMPONENTS Demangle)
 find_package(lz4 REQUIRED)
 find_package(nlohmann_json 3.8 REQUIRED)
 find_package(Opus 1.3 MODULE)
@@ -310,6 +311,10 @@ find_package(stb MODULE)
 find_package(VulkanMemoryAllocator CONFIG)
 find_package(ZLIB 1.2 REQUIRED)
 find_package(zstd 1.5 REQUIRED)
+
+if (YUZU_USE_LLVM_DEMANGLE)
+    find_package(LLVM 17.0.2 MODULE COMPONENTS Demangle)
+endif()
 
 if (NOT YUZU_USE_EXTERNAL_VULKAN_HEADERS)
     find_package(VulkanHeaders 1.3.274 REQUIRED)
