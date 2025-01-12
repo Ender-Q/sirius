@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2014 Citra Emulator Project
+// SPDX-FileCopyrightText: 2025 Citron Homebrew Emulator Project & vampiric_x 2025
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <cinttypes>
@@ -5267,11 +5268,6 @@ static void SetHighDPIAttributes() {
     // Other OSes should be better than Windows at fractional scaling.
     QApplication::setHighDpiScaleFactorRoundingPolicy(
         Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
-#endif
-
-#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 }
 
