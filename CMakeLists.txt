@@ -117,10 +117,13 @@ if (ANDROID AND YUZU_DOWNLOAD_ANDROID_VVL)
                         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/externals")
     endif()
 
-    # Copy the arm64 binary to src/android/app/main/jniLibs
+    # Copy the arm64 binary to src/android/app/main/jniLibs only if it doesn't exist
     set(vvl_lib_path "${CMAKE_CURRENT_SOURCE_DIR}/src/android/app/src/main/jniLibs/arm64-v8a/")
-    file(COPY "${CMAKE_BINARY_DIR}/externals/android-binaries-${vvl_version}/arm64-v8a/libVkLayer_khronos_validation.so"
-            DESTINATION "${vvl_lib_path}")
+    set(vvl_lib_file "${vvl_lib_path}/libVkLayer_khronos_validation.so")
+    if (NOT EXISTS "${vvl_lib_file}")
+        file(COPY "${CMAKE_BINARY_DIR}/externals/android-binaries-${vvl_version}/arm64-v8a/libVkLayer_khronos_validation.so"
+                DESTINATION "${vvl_lib_path}")
+    endif()
 endif()
 
 if (ANDROID)
