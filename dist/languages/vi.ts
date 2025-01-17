@@ -409,7 +409,7 @@ Việc này sẽ ban tên người dùng trên diễn đàn và IP của họ lu
     </message>
     <message>
         <location filename="../../src/yuzu/configuration/shared_translation.cpp" line="37"/>
-        <source>Mii Edit</source>
+        <source>Mii Editor</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -6119,7 +6119,7 @@ Vui lòng, chỉ sử dụng tính năng này để cài đặt các bản cập
     </message>
     <message>
         <location filename="../../src/yuzu/main.cpp" line="4451"/>
-        <source>Mii Edit Applet</source>
+        <source>Mii Editor Applet</source>
         <translation type="unfinished"/>
     </message>
     <message>

@@ -410,7 +410,7 @@ Cela bannirait à la fois son nom d&apos;utilisateur du forum et son adresse IP.
     </message>
     <message>
         <location filename="../../src/yuzu/configuration/shared_translation.cpp" line="37"/>
-        <source>Mii Edit</source>
+        <source>Mii Editor</source>
         <translation>Édition de Mii</translation>
     </message>
     <message>
@@ -6164,7 +6164,7 @@ Veuillez n&apos;utiliser cette fonctionnalité que pour installer des mises à j
     </message>
     <message>
         <location filename="../../src/yuzu/main.cpp" line="4451"/>
-        <source>Mii Edit Applet</source>
+        <source>Mii Editor Applet</source>
         <translation>Applet de l&apos;éditeur Mii</translation>
     </message>
     <message>

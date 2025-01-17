@@ -409,7 +409,7 @@ Ez kitiltaná a fórum felhasználóneve és az IP címe alapján.</translation>
     </message>
     <message>
         <location filename="../../src/yuzu/configuration/shared_translation.cpp" line="37"/>
-        <source>Mii Edit</source>
+        <source>Mii Editor</source>
         <translation>Mii szerkesztés</translation>
     </message>
     <message>
@@ -6138,7 +6138,7 @@ Kérjük, csak frissítések és DLC-k telepítéséhez használd ezt a funkció
     </message>
     <message>
         <location filename="../../src/yuzu/main.cpp" line="4451"/>
-        <source>Mii Edit Applet</source>
+        <source>Mii Editor Applet</source>
         <translation>Mii szerkesztő applet</translation>
     </message>
     <message>

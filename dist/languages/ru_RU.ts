@@ -409,7 +409,7 @@ This would ban both their forum username and their IP address.</source>
     </message>
     <message>
         <location filename="../../src/yuzu/configuration/shared_translation.cpp" line="37"/>
-        <source>Mii Edit</source>
+        <source>Mii Editor</source>
         <translation>Mii редактор</translation>
     </message>
     <message>
@@ -6167,8 +6167,8 @@ Please, only use this feature to install updates and DLC.</source>
     </message>
     <message>
         <location filename="../../src/yuzu/main.cpp" line="4451"/>
-        <source>Mii Edit Applet</source>
-        <translation>Mii Edit Applet</translation>
+        <source>Mii Editor Applet</source>
+        <translation>Mii Editor Applet</translation>
     </message>
     <message>
         <location filename="../../src/yuzu/main.cpp" line="4452"/>

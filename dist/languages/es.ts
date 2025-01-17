@@ -409,7 +409,7 @@ Esto banearía su nombre del foro y su dirección IP.</translation>
     </message>
     <message>
         <location filename="../../src/yuzu/configuration/shared_translation.cpp" line="37"/>
-        <source>Mii Edit</source>
+        <source>Mii Editor</source>
         <translation>Editor de Mii</translation>
     </message>
     <message>
@@ -6169,7 +6169,7 @@ Por favor, utiliza esta función sólo para instalar actualizaciones y DLCs.</tr
     </message>
     <message>
         <location filename="../../src/yuzu/main.cpp" line="4451"/>
-        <source>Mii Edit Applet</source>
+        <source>Mii Editor Applet</source>
         <translation>Applet de Editor de Mii</translation>
     </message>
     <message>
