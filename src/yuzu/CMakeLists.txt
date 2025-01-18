@@ -436,6 +436,10 @@ if (YUZU_USE_QT_WEB_ENGINE)
     target_compile_definitions(yuzu PRIVATE -DYUZU_USE_QT_WEB_ENGINE)
 endif ()
 
+target_link_libraries(yuzu PRIVATE PRIVATE
+    Qt::Network
+)
+
 if(UNIX AND NOT APPLE)
     install(TARGETS yuzu)
 endif()
