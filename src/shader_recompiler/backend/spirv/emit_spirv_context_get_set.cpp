@@ -547,11 +547,17 @@ Id EmitInvocationInfo(EmitContext& ctx) {
     switch (ctx.stage) {
     case Stage::TessellationControl:
     case Stage::TessellationEval:
-        return ctx.OpShiftLeftLogical(ctx.U32[1], ctx.OpLoad(ctx.U32[1], ctx.patch_vertices_in), ctx.Const(16u));
-    case Stage::Geometry:
-        return ctx.OpShiftLeftLogical(ctx.U32[1], ctx.Const(InputTopologyVertices::vertices(ctx.runtime_info.input_topology)), ctx.Const(16u));
+        return ctx.OpShiftLeftLogical(ctx.U32[1], ctx.OpLoad(ctx.U32[1], ctx.patch_vertices_in),
+                                      ctx.Const(16u));
+    case Stage::Fragment:
+        // Return sample mask in upper 16 bits
+        return ctx.OpShiftLeftLogical(ctx.U32[1], ctx.OpLoad(ctx.U32[1], ctx.sample_mask),
+                                      ctx.Const(16u));
+    case Stage::Compute:
+        // For compute shaders, return standard format since we can't access workgroup size directly
+        return ctx.Const(0x00ff0000u);
     default:
-        LOG_WARNING(Shader, "(STUBBED) called");
+        // For other stages, return the standard invocation info format
         return ctx.Const(0x00ff0000u);
     }
 }
