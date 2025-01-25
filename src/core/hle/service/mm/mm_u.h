@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: Copyright 2018 yuzu Emulator Project
+// SPDX-FileCopyrightText: Copyright 2025 citron Emulator Project
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #pragma once
@@ -20,11 +21,23 @@ enum class Module : u32 {
     NVDEC = 5,
     NVENC = 6,
     NVJPG = 7,
-    TEST = 8
+    TEST = 8,
 };
 
-typedef u32 Priority;
-typedef u32 Setting;
+using Priority = u32;
+using Setting = u32;
+
+enum class EventClearMode : u32 {
+    // TODO: Add specific clear mode values when documented
+};
+
+// Consolidate settings into a struct for better organization
+struct Settings {
+    Setting min{0};
+    Setting max{0};
+    Setting current{0};
+    u32 id{1};  // Used by newer API versions
+};
 
 void LoopProcess(Core::System& system);
 

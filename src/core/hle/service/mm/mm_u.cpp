@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: Copyright 2018 yuzu Emulator Project
+// SPDX-FileCopyrightText: Copyright 2025 citron Emulator Project
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "common/logging/log.h"
@@ -30,22 +31,23 @@ public:
 
 private:
     void InitializeOld(HLERequestContext& ctx) {
-        LOG_WARNING(Service_MM, "(STUBBED) called.");
-
         IPC::RequestParser rp{ctx};
-        module = rp.PopEnum<Module>();
-        priority = rp.Pop<Priority>();
-        event_clear_mode = rp.Pop<u32>();
+        const auto module = rp.PopEnum<Module>();
+        const auto priority = rp.Pop<Priority>();
+        const auto event_clear_mode = rp.PopEnum<EventClearMode>();
+
+        LOG_WARNING(Service_MM, "(STUBBED) called, module={:d}, priority={:d}, event_clear_mode={:d}",
+                   static_cast<u32>(module), priority, static_cast<u32>(event_clear_mode));
 
         IPC::ResponseBuilder rb{ctx, 2};
         rb.Push(ResultSuccess);
     }
 
     void FinalizeOld(HLERequestContext& ctx) {
-        LOG_WARNING(Service_MM, "(STUBBED) called.");
-
         IPC::RequestParser rp{ctx};
-        module = rp.PopEnum<Module>();
+        const auto module = rp.PopEnum<Module>();
+
+        LOG_WARNING(Service_MM, "(STUBBED) called, module={:d}", static_cast<u32>(module));
 
         IPC::ResponseBuilder rb{ctx, 2};
         rb.Push(ResultSuccess);
@@ -55,9 +57,12 @@ private:
         LOG_WARNING(Service_MM, "(STUBBED) called.");
 
         IPC::RequestParser rp{ctx};
-        module = rp.PopEnum<Module>();
+        const auto module = rp.PopEnum<Module>();
         min = rp.Pop<Setting>();
         max = rp.Pop<Setting>();
+
+        LOG_DEBUG(Service_MM, "(STUBBED) called, module={:d}, min=0x{:X}, max=0x{:X}",
+                 static_cast<u32>(module), min, max);
 
         current = min;
         IPC::ResponseBuilder rb{ctx, 2};
@@ -65,10 +70,10 @@ private:
     }
 
     void GetOld(HLERequestContext& ctx) {
-        LOG_WARNING(Service_MM, "(STUBBED) called.");
-
         IPC::RequestParser rp{ctx};
-        module = rp.PopEnum<Module>();
+        const auto module = rp.PopEnum<Module>();
+
+        LOG_DEBUG(Service_MM, "(STUBBED) called, module={:d}", static_cast<u32>(module));
 
         IPC::ResponseBuilder rb{ctx, 3};
         rb.Push(ResultSuccess);
