@@ -318,7 +318,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 # Enforce the search mode of non-required packages for better and shorter failure messages
 find_package(Boost REQUIRED context)
 find_package(enet MODULE)
-find_package(fmt 11 REQUIRED)
+find_package(fmt REQUIRED)
 find_package(lz4 REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(Opus MODULE)
@@ -334,7 +334,7 @@ if (YUZU_USE_LLVM_DEMANGLE)
 endif()
 
 if (NOT YUZU_USE_EXTERNAL_VULKAN_HEADERS)
-    find_package(VulkanHeaders 1.4.304 REQUIRED)
+    find_package(VulkanHeaders 1.4.306 REQUIRED)
 endif()
 
 if (NOT YUZU_USE_EXTERNAL_VULKAN_UTILITY_LIBRARIES)
