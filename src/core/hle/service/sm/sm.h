@@ -39,6 +39,7 @@ public:
 
 private:
     void Initialize(HLERequestContext& ctx);
+    void RegisterClient(HLERequestContext& ctx);
     void GetServiceCmif(HLERequestContext& ctx);
     void GetServiceTipc(HLERequestContext& ctx);
     void RegisterServiceCmif(HLERequestContext& ctx);
