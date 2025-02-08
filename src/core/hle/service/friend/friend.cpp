@@ -22,7 +22,7 @@ public:
         // clang-format off
         static const FunctionInfo functions[] = {
             {0, &IFriendService::GetCompletionEvent, "GetCompletionEvent"},
-            {1, nullptr, "Cancel"},
+            {1, &IFriendService::Cancel, "Cancel"},
             {10100, nullptr, "GetFriendListIds"},
             {10101, &IFriendService::GetFriendList, "GetFriendList"},
             {10102, nullptr, "UpdateFriendInfo"},
@@ -49,7 +49,7 @@ public:
             {20101, &IFriendService::GetNewlyFriendCount, "GetNewlyFriendCount"},
             {20102, nullptr, "GetFriendDetailedInfo"},
             {20103, nullptr, "SyncFriendList"},
-            {20104, nullptr, "RequestSyncFriendList"},
+            {20104, &IFriendService::RequestSyncFriendList, "RequestSyncFriendList"},
             {20110, nullptr, "LoadFriendSetting"},
             {20200, &IFriendService::GetReceivedFriendRequestCount, "GetReceivedFriendRequestCount"},
             {20201, nullptr, "GetFriendRequestList"},
@@ -151,11 +151,23 @@ private:
     static_assert(sizeof(FriendsUserSetting) == 0x800, "FriendsUserSetting is an invalid size");
 
     void GetCompletionEvent(HLERequestContext& ctx) {
-        LOG_DEBUG(Service_Friend, "called");
+        LOG_DEBUG(Service_Friend, "Retrieving completion event");
 
-        IPC::ResponseBuilder rb{ctx, 2, 1};
-        rb.Push(ResultSuccess);
-        rb.PushCopyObjects(completion_event->GetReadableEvent());
+        const auto& event = completion_event->GetReadableEvent();
+
+        IPC::ResponseBuilder response{ctx, 2, 1};
+        response.Push(event.Signal());
+        response.PushCopyObjects(event);
+    }
+
+    void Cancel(HLERequestContext& ctx) {
+        LOG_DEBUG(Service_Friend, "Cancelling friend service operation");
+
+        const auto& event = completion_event->GetReadableEvent();
+
+        IPC::ResponseBuilder response{ctx, 2};
+        response.Push(ResultSuccess);
+        response.PushCopyObjects(event);
     }
 
     void GetFriendList(HLERequestContext& ctx) {
@@ -247,6 +259,13 @@ private:
         rb.Push(0);
     }
 
+    void RequestSyncFriendList(HLERequestContext& ctx) {
+        LOG_DEBUG(Service_Friend, "Friend list sync requested");
+
+        IPC::ResponseBuilder response{ctx, 2};
+        response.Push(ResultSuccess);
+    }
+
     void GetReceivedFriendRequestCount(HLERequestContext& ctx) {
         IPC::RequestParser rp{ctx};
         [[maybe_unused]] const auto uuid = rp.PopRaw<Common::UUID>();
@@ -259,13 +278,13 @@ private:
     }
 
     void GetUserPresenceView(HLERequestContext& ctx) {
-        LOG_DEBUG(Service_Friend, "(STUBBED) called");
+        IPC::RequestParser request{ctx};
+        const auto user_id = request.PopRaw<Common::UUID>();
 
-        u8 buf[0xe0]{};
-        ctx.WriteBuffer(buf);
+        LOG_DEBUG(Service_Friend, "Getting presence view for user {}", user_id.RawString());
 
-        IPC::ResponseBuilder rb{ctx, 3};
-        rb.Push(ResultSuccess);
+        IPC::ResponseBuilder response{ctx, 2};
+        response.Push(ResultSuccess);
     }
 
     void GetPlayHistoryStatistics(HLERequestContext& ctx) {
@@ -292,6 +311,13 @@ private:
 
         IPC::ResponseBuilder rb{ctx, 2};
         rb.Push(ResultSuccess);
+    }
+
+    void LoadUserSetting(HLERequestContext& ctx) {
+        LOG_DEBUG(Service_Friend, "Loading friend service user settings");
+
+        IPC::ResponseBuilder response{ctx, 2};
+        response.Push(ResultSuccess);
     }
 
     void GetReceivedFriendInvitationCountCache(HLERequestContext& ctx) {
