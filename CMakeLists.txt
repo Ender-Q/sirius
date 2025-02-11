@@ -150,7 +150,7 @@ if (YUZU_USE_BUNDLED_VCPKG)
 
     if (MSVC)
         set(VCPKG_DOWNLOADS_PATH ${PROJECT_SOURCE_DIR}/externals/vcpkg/downloads)
-        set(NASM_VERSION "2.16.01")
+        set(NASM_VERSION "2.16.03")
         set(NASM_DESTINATION_PATH ${VCPKG_DOWNLOADS_PATH}/nasm-${NASM_VERSION}-win64.zip)
         set(NASM_DOWNLOAD_URL "https://codeberg.org/yuzu-emu/ext-windows-bin/raw/master/nasm/nasm-${NASM_VERSION}-win64.zip")
 
@@ -553,7 +553,7 @@ endif()
 # against all the src files. This should be used before making a pull request.
 # =======================================================================
 
-set(CLANG_FORMAT_POSTFIX "-15")
+set(CLANG_FORMAT_POSTFIX "-18")
 find_program(CLANG_FORMAT
     NAMES clang-format${CLANG_FORMAT_POSTFIX}
           clang-format
