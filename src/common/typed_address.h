@@ -5,7 +5,7 @@
 
 #include <compare>
 #include <type_traits>
-#include <fmt/format.h>
+#include <fmt/ranges.h>
 
 #include "common/common_types.h"
 

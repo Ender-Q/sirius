@@ -7,7 +7,7 @@
 #include <mutex>
 #include <thread>
 
-#include <fmt/format.h>
+#include <fmt/ranges.h>
 
 #ifdef _WIN32
 #include <windows.h> // For OutputDebugStringW

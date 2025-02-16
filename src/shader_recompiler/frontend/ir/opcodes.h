@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <array>
 
-#include <fmt/format.h>
+#include <fmt/ranges.h>
 
 #include "common/polyfill_ranges.h"
 #include "shader_recompiler/frontend/ir/type.h"

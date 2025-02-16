@@ -5,7 +5,7 @@
 
 #include <bitset>
 
-#include <fmt/format.h>
+#include <fmt/ranges.h>
 
 #include "common/bit_cast.h"
 #include "common/bit_field.h"

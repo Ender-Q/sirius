@@ -4,7 +4,7 @@
 #pragma once
 
 #include <string>
-#include <fmt/format.h>
+#include <fmt/ranges.h>
 
 #include "common/common_types.h"
 

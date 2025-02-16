@@ -9,7 +9,7 @@
 #include <QNetworkReply>
 
 #include <discord_rpc.h>
-#include <fmt/format.h>
+#include <fmt/ranges.h>
 
 #include "common/common_types.h"
 #include "common/string_util.h"
