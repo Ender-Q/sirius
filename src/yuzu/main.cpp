@@ -1610,8 +1610,8 @@ void GMainWindow::UpdateMenuState() {
                                     ui->action_Load_Cabinet_Restorer,
                                     ui->action_Load_Cabinet_Formatter,
                                     ui->action_Load_Mii_Edit,
-                                    ui->action_Load_Home_Menu,
-                                    ui->action_Open_Controller_Menu};
+                                    ui->action_Open_Controller_Menu,
+                                    ui->action_Load_Home_Menu};
 
     for (QAction* action : running_actions) {
         action->setEnabled(emulation_running);
@@ -4466,29 +4466,6 @@ void GMainWindow::OnOpenControllerMenu() {
              LibraryAppletParameters(ControllerAppletId, Service::AM::AppletId::Controller));
 }
 
-void GMainWindow::OnHomeMenu() {
-    constexpr u64 QLaunchId = static_cast<u64>(Service::AM::AppletProgramId::QLaunch);
-    auto bis_system = system->GetFileSystemController().GetSystemNANDContents();
-    if (!bis_system) {
-        QMessageBox::warning(this, tr("No firmware available"),
-                             tr("Please install the firmware to use the Home Menu."));
-        return;
-    }
-
-    auto qlaunch_applet_nca = bis_system->GetEntry(QLaunchId, FileSys::ContentRecordType::Program);
-    if (!qlaunch_applet_nca) {
-        QMessageBox::warning(this, tr("Home Menu Applet"),
-                             tr("Home Menu is not available. Please reinstall firmware."));
-        return;
-    }
-
-    system->GetFrontendAppletHolder().SetCurrentAppletId(Service::AM::AppletId::QLaunch);
-
-    const auto filename = QString::fromStdString((qlaunch_applet_nca->GetFullPath()));
-    UISettings::values.roms_path = QFileInfo(filename).path().toStdString();
-    BootGame(filename, LibraryAppletParameters(QLaunchId, Service::AM::AppletId::QLaunch));
-}
-
 void GMainWindow::OnCaptureScreenshot() {
     if (emu_thread == nullptr || !emu_thread->IsRunning()) {
         return;
@@ -5367,4 +5344,41 @@ int main(int argc, char* argv[]) {
     int result = app.exec();
     detached_tasks.WaitForAllTasks();
     return result;
+}
+
+void GMainWindow::OnHomeMenu() {
+    constexpr u64 QLaunchId = static_cast<u64>(Service::AM::AppletProgramId::QLaunch);
+
+    // Check if system NAND contents are available
+    auto bis_system = system->GetFileSystemController().GetSystemNANDContents();
+    if (!bis_system) {
+        QMessageBox::warning(this, tr("System Error"),
+                           tr("System NAND contents not found. Please verify your firmware installation."));
+        return;
+    }
+
+    // Try to get the QLaunch NCA
+    auto qlaunch_nca = bis_system->GetEntry(QLaunchId, FileSys::ContentRecordType::Program);
+    if (!qlaunch_nca) {
+        QMessageBox::warning(this, tr("System Error"),
+                           tr("Home Menu applet not found. Please verify your firmware installation."));
+        return;
+    }
+
+    // Set up applet parameters
+    Service::AM::FrontendAppletParameters params{
+        .program_id = QLaunchId,
+        .applet_id = Service::AM::AppletId::QLaunch,
+        .applet_type = Service::AM::AppletType::SystemApplet
+    };
+
+    // Configure system for QLaunch
+    system->GetFrontendAppletHolder().SetCurrentAppletId(Service::AM::AppletId::QLaunch);
+
+    // Get path and launch
+    const auto nca_path = QString::fromStdString(qlaunch_nca->GetFullPath());
+    UISettings::values.roms_path = QFileInfo(nca_path).path().toStdString();
+
+    // Launch QLaunch with proper parameters
+    BootGame(nca_path, params);
 }

@@ -644,6 +644,7 @@ enum class CreateProcessFlag : u32 {
     // 11.x+ DisableDeviceAddressSpaceMerge.
     DisableDeviceAddressSpaceMerge = (1 << 12),
 
+    // 13.x+ EnableReservedRegionExtraSize.
     EnableReservedRegionExtraSize = (1 << 13),
 
     // Mask of all flags.

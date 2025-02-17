@@ -683,9 +683,6 @@ public:
     size_t GetAliasRegionSize() const {
         return m_alias_region_end - m_alias_region_start;
     }
-    size_t GetReservedRegionExtraSize() const {
-        return m_alias_region_extra_size;
-    }
     size_t GetStackRegionSize() const {
         return m_stack_region_end - m_stack_region_start;
     }
@@ -717,6 +714,10 @@ public:
 
     u32 GetAddressSpaceWidth() const {
         return m_address_space_width;
+    }
+
+    size_t GetReservedRegionExtraSize() const {
+        return m_alias_region_extra_size;
     }
 
 public:

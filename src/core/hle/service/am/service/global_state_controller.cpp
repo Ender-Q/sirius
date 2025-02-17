@@ -38,18 +38,6 @@ Result IGlobalStateController::StartSleepSequence(u8 a) {
     R_SUCCEED();
 }
 
-Result IGlobalStateController::StartShutdownSequence() {
-    LOG_INFO(Service_AM, "called");
-    system.Exit();
-    R_SUCCEED();
-}
-
-Result IGlobalStateController::StartRebootSequence() {
-    LOG_INFO(Service_AM, "called");
-    system.Exit();
-    R_SUCCEED();
-}
-
 Result IGlobalStateController::LoadAndApplyIdlePolicySettings() {
     LOG_WARNING(Service_AM, "(STUBBED) called");
     R_SUCCEED();
@@ -72,6 +60,18 @@ Result IGlobalStateController::OpenCradleFirmwareUpdater(
     Out<SharedPointer<ICradleFirmwareUpdater>> out_cradle_firmware_updater) {
     LOG_INFO(Service_AM, "called");
     *out_cradle_firmware_updater = std::make_shared<ICradleFirmwareUpdater>(system);
+    R_SUCCEED();
+}
+
+Result IGlobalStateController::StartShutdownSequence() {
+    LOG_INFO(Service_AM, "called");
+    system.Exit();
+    R_SUCCEED();
+}
+
+Result IGlobalStateController::StartRebootSequence() {
+    LOG_INFO(Service_AM, "called");
+    system.Exit();
     R_SUCCEED();
 }
 

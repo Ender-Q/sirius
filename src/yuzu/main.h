@@ -404,7 +404,6 @@ private slots:
     void OnCabinet(Service::NFP::CabinetMode mode);
     void OnMiiEdit();
     void OnOpenControllerMenu();
-    void OnHomeMenu();
     void OnCaptureScreenshot();
     void OnCheckFirmwareDecryption();
     void OnLanguageChanged(const QString& locale);
@@ -413,6 +412,7 @@ private slots:
     void OnShutdownBeginDialog();
     void OnEmulationStopped();
     void OnEmulationStopTimeExpired();
+    void OnHomeMenu();
 
 private:
     QString GetGameListErrorRemoving(InstalledEntryType type) const;

@@ -410,9 +410,6 @@ public:
     size_t GetAliasRegionSize() const {
         return m_page_table.GetAliasRegionSize();
     }
-    size_t GetReservedRegionExtraSize() const {
-        return m_page_table.GetReservedRegionExtraSize();
-    }
     size_t GetStackRegionSize() const {
         return m_page_table.GetStackRegionSize();
     }
@@ -474,6 +471,10 @@ public:
 
     const KPageTable& GetBasePageTable() const {
         return m_page_table;
+    }
+
+    size_t GetReservedRegionExtraSize() const {
+        return m_page_table.GetReservedRegionExtraSize();
     }
 };
 
