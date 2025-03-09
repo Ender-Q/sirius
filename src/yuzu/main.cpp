@@ -1528,7 +1528,6 @@ void GMainWindow::ConnectMenuEvents() {
     connect_menu(ui->action_Pause, &GMainWindow::OnPauseContinueGame);
     connect_menu(ui->action_Stop, &GMainWindow::OnStopGame);
     connect_menu(ui->action_Report_Compatibility, &GMainWindow::OnMenuReportCompatibility);
-    connect_menu(ui->action_Open_Quickstart_Guide, &GMainWindow::OnOpenQuickstartGuide);
     connect_menu(ui->action_Open_FAQ, &GMainWindow::OnOpenFAQ);
     connect_menu(ui->action_Restart, &GMainWindow::OnRestartGame);
     connect_menu(ui->action_Configure, &GMainWindow::OnConfigure);
@@ -1834,9 +1833,7 @@ bool GMainWindow::LoadROM(const QString& filename, Service::AM::FrontendAppletPa
                     tr("Error while loading ROM! %1", "%1 signifies a numeric error code.")
                         .arg(QString::fromStdString(error_code));
                 const auto description =
-                    tr("%1<br>Please follow <a href='https://yuzu-emu.org/help/quickstart/'>the "
-                       "yuzu quickstart guide</a> to redump your files.<br>You can refer "
-                       "to the yuzu wiki</a> or the yuzu Discord</a> for help.",
+                    tr("%1<br>This software is provided as-is without any warranty or support.<br>Please refer to community resources or documentation for assistance.",
                        "%1 signifies an error string.")
                         .arg(QString::fromStdString(
                             GetResultStatusString(static_cast<Loader::ResultStatus>(error_id))));
@@ -3559,10 +3556,6 @@ void GMainWindow::OpenURL(const QUrl& url) {
         QMessageBox::warning(this, tr("Error opening URL"),
                              tr("Unable to open the URL \"%1\".").arg(url.toString()));
     }
-}
-
-void GMainWindow::OnOpenQuickstartGuide() {
-    OpenURL(QUrl(QStringLiteral("https://yuzu-emu.org/help/quickstart/")));
 }
 
 void GMainWindow::OnOpenFAQ() {
