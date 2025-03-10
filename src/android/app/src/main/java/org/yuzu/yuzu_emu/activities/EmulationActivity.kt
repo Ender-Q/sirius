@@ -39,12 +39,14 @@ import org.yuzu.yuzu_emu.NativeLibrary
 import org.yuzu.yuzu_emu.R
 import org.yuzu.yuzu_emu.YuzuApplication
 import org.yuzu.yuzu_emu.databinding.ActivityEmulationBinding
+import org.yuzu.yuzu_emu.dialogs.NetPlayDialog
 import org.yuzu.yuzu_emu.features.input.NativeInput
 import org.yuzu.yuzu_emu.features.settings.model.BooleanSetting
 import org.yuzu.yuzu_emu.features.settings.model.IntSetting
 import org.yuzu.yuzu_emu.features.settings.model.Settings
 import org.yuzu.yuzu_emu.model.EmulationViewModel
 import org.yuzu.yuzu_emu.model.Game
+import org.yuzu.yuzu_emu.network.NetPlayManager
 import org.yuzu.yuzu_emu.utils.InputHandler
 import org.yuzu.yuzu_emu.utils.Log
 import org.yuzu.yuzu_emu.utils.MemoryUtil
@@ -404,6 +406,16 @@ class EmulationActivity : AppCompatActivity(), SensorEventListener {
         }
         setPictureInPictureParams(pictureInPictureParamsBuilder.build())
     }
+
+    fun displayMultiplayerDialog() {
+        val dialog = NetPlayDialog(this)
+        dialog.show()
+    }
+
+    fun addNetPlayMessages(type: Int, msg: String) {
+        NetPlayManager.addNetPlayMessage(type, msg)
+    }
+
 
     private var pictureInPictureReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {

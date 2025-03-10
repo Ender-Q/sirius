@@ -31,6 +31,7 @@ import org.yuzu.yuzu_emu.HomeNavigationDirections
 import org.yuzu.yuzu_emu.NativeLibrary
 import org.yuzu.yuzu_emu.R
 import org.yuzu.yuzu_emu.databinding.ActivityMainBinding
+import org.yuzu.yuzu_emu.dialogs.NetPlayDialog
 import org.yuzu.yuzu_emu.features.settings.model.Settings
 import org.yuzu.yuzu_emu.fragments.AddGameFolderDialogFragment
 import org.yuzu.yuzu_emu.fragments.ProgressDialogFragment
@@ -68,6 +69,7 @@ class MainActivity : AppCompatActivity(), ThemeProvider {
         splashScreen.setKeepOnScreenCondition { !DirectoryInitialization.areDirectoriesReady }
 
         ThemeHelper.setTheme(this)
+        NativeLibrary.netPlayInit()
 
         super.onCreate(savedInstanceState)
 
@@ -155,6 +157,11 @@ class MainActivity : AppCompatActivity(), ThemeProvider {
         }
 
         setInsets()
+    }
+
+    fun displayMultiplayerDialog() {
+        val dialog = NetPlayDialog(this)
+        dialog.show()
     }
 
     private fun checkKeys() {

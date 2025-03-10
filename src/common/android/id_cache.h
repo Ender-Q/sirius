@@ -5,6 +5,7 @@
 
 #include <future>
 #include <jni.h>
+#include <network/network.h>
 
 #include "video_core/rasterizer_interface.h"
 
@@ -112,5 +113,6 @@ jmethodID GetYuzuDeviceGetSupportsVibration();
 jmethodID GetYuzuDeviceVibrate();
 jmethodID GetYuzuDeviceGetAxes();
 jmethodID GetYuzuDeviceHasKeys();
-
-} // namespace Common::Android
+jmethodID GetAddNetPlayMessage();
+jmethodID ClearChat();
+} // namespace Android

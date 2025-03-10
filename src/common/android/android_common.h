@@ -26,4 +26,6 @@ jobject ToJLong(JNIEnv* env, s64 value);
 bool GetJBoolean(JNIEnv* env, jobject jboolean);
 jobject ToJBoolean(JNIEnv* env, bool value);
 
+jobjectArray ToJStringArray(JNIEnv* env, const std::vector<std::string>& strs);
+
 } // namespace Common::Android
