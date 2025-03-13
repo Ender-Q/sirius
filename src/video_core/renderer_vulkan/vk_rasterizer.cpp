@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: Copyright 2019 yuzu Emulator Project
+// SPDX-FileCopyrightText: Copyright 2025 citron Emulator Project
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <algorithm>
@@ -928,6 +929,8 @@ bool AccelerateDMA::BufferToImage(const Tegra::DMA::ImageCopy& copy_info,
 
 void RasterizerVulkan::UpdateDynamicStates() {
     auto& regs = maxwell3d->regs;
+
+    // Always update base dynamic states.
     UpdateViewportsState(regs);
     UpdateScissorsState(regs);
     UpdateDepthBias(regs);
@@ -935,7 +938,9 @@ void RasterizerVulkan::UpdateDynamicStates() {
     UpdateDepthBounds(regs);
     UpdateStencilFaces(regs);
     UpdateLineWidth(regs);
+
     if (device.IsExtExtendedDynamicStateSupported()) {
+        // Update extended dynamic states.
         UpdateCullMode(regs);
         UpdateDepthCompareOp(regs);
         UpdateFrontFace(regs);
@@ -946,37 +951,44 @@ void RasterizerVulkan::UpdateDynamicStates() {
             UpdateDepthTestEnable(regs);
             UpdateDepthWriteEnable(regs);
             UpdateStencilTestEnable(regs);
+
             if (device.IsExtExtendedDynamicState2Supported()) {
                 UpdatePrimitiveRestartEnable(regs);
                 UpdateRasterizerDiscardEnable(regs);
                 UpdateDepthBiasEnable(regs);
             }
+
             if (device.IsExtExtendedDynamicState3EnablesSupported()) {
-                const auto old = regs.logic_op.enable;
+                // Store the original logic_op.enable state.
+                const auto oldLogicOpEnable = regs.logic_op.enable;
 
-                if (device.GetDriverID() == VkDriverIdKHR::VK_DRIVER_ID_AMD_OPEN_SOURCE ||
-                    device.GetDriverID() == VkDriverIdKHR::VK_DRIVER_ID_AMD_OPEN_SOURCE_KHR) {
-                    struct In {
-                        const Tegra::Engines::Maxwell3D::Regs::VertexAttribute::Type d;
-                        In(Tegra::Engines::Maxwell3D::Regs::VertexAttribute::Type n) : d(n) {}
-                        bool operator()(Tegra::Engines::Maxwell3D::Regs::VertexAttribute n) const {
-                            return n.type == d;
-                        }
-                    };
+                // Determine if the current driver is an AMD driver.
+                bool isAmdDriver = (device.GetDriverID() == VK_DRIVER_ID_AMD_OPEN_SOURCE ||
+                                    device.GetDriverID() == VK_DRIVER_ID_AMD_OPEN_SOURCE_KHR ||
+                                    device.GetDriverID() == VK_DRIVER_ID_AMD_PROPRIETARY ||
+                                    device.GetDriverID() == VK_DRIVER_ID_AMD_PROPRIETARY_KHR ||
+                                    device.GetDriverID() == VK_DRIVER_ID_MESA_RADV);
 
-                    auto has_float = std::any_of(
+                if (isAmdDriver) {
+                    // Check if any vertex attribute is of type Float.
+                    bool hasFloat = std::any_of(
                         regs.vertex_attrib_format.begin(), regs.vertex_attrib_format.end(),
-                        In(Tegra::Engines::Maxwell3D::Regs::VertexAttribute::Type::Float));
+                        [](const auto& attrib) {
+                            return attrib.type == Tegra::Engines::Maxwell3D::Regs::VertexAttribute::Type::Float;
+                        });
 
-                    regs.logic_op.enable = static_cast<u32>(!has_float);
+                    // For AMD drivers, disable logic_op if a float attribute is present.
+                    regs.logic_op.enable = static_cast<u32>(!hasFloat);
                     UpdateLogicOpEnable(regs);
-                    regs.logic_op.enable = old;
+                    // Restore the original value.
+                    regs.logic_op.enable = oldLogicOpEnable;
                 } else {
                     UpdateLogicOpEnable(regs);
                 }
                 UpdateDepthClampEnable(regs);
             }
         }
+
         if (device.IsExtExtendedDynamicState2ExtrasSupported()) {
             UpdateLogicOp(regs);
         }
@@ -984,6 +996,7 @@ void RasterizerVulkan::UpdateDynamicStates() {
             UpdateBlending(regs);
         }
     }
+
     if (device.IsExtVertexInputDynamicStateSupported()) {
         UpdateVertexInput(regs);
     }
