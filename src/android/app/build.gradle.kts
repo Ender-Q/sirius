@@ -105,6 +105,7 @@ android {
             }
 
             resValue("string", "app_name_suffixed", "yuzu")
+            isDefault = true
             isMinifyEnabled = true
             isShrinkResources = true
             isJniDebuggable = false
