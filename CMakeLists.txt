@@ -347,7 +347,7 @@ if (YUZU_USE_LLVM_DEMANGLE)
 endif()
 
 if (NOT YUZU_USE_EXTERNAL_VULKAN_HEADERS)
-    find_package(VulkanHeaders 1.4.304.1 REQUIRED)
+    find_package(VulkanHeaders 1.4.313 REQUIRED)
 endif()
 
 if (NOT YUZU_USE_EXTERNAL_VULKAN_UTILITY_LIBRARIES)
