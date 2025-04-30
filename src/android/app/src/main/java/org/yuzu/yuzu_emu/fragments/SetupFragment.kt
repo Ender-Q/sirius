@@ -332,7 +332,6 @@ class SetupFragment : Fragment() {
                 }
             }
         }
-
     private lateinit var gamesDirCallback: SetupCallback
 
     val getGamesDirectory =

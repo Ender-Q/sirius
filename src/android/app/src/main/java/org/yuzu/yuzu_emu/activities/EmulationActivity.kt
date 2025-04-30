@@ -150,22 +150,13 @@ class EmulationActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (event.action == KeyEvent.ACTION_DOWN) {
-            if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                // Special case, we do not support multiline input, dismiss the keyboard.
-                val overlayView: View =
-                    this.findViewById(R.id.surface_input_overlay)
-                val im =
-                    overlayView.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                im.hideSoftInputFromWindow(overlayView.windowToken, 0)
+            val textChar = event.unicodeChar
+            if (textChar == 0) {
+                // No text, button input.
+                NativeLibrary.submitInlineKeyboardInput(keyCode)
             } else {
-                val textChar = event.unicodeChar
-                if (textChar == 0) {
-                    // No text, button input.
-                    NativeLibrary.submitInlineKeyboardInput(keyCode)
-                } else {
-                    // Text submitted.
-                    NativeLibrary.submitInlineKeyboardText(textChar.toChar().toString())
-                }
+                // Text submitted.
+                NativeLibrary.submitInlineKeyboardText(textChar.toChar().toString())
             }
         }
         return super.onKeyDown(keyCode, event)
