@@ -27,8 +27,8 @@ val autoVersion = (((System.currentTimeMillis() / 1000) - 1451606400) / 10).toIn
 android {
     namespace = "org.yuzu.yuzu_emu"
 
-    compileSdkVersion = "android-34"
-    ndkVersion = "28.0.12674087"
+    compileSdkVersion = "android-35"
+    ndkVersion = "29.0.13113456 rc1"
 
     buildFeatures {
         viewBinding = true
@@ -56,7 +56,7 @@ android {
         // TODO If this is ever modified, change application_id in strings.xml
         applicationId = "org.yuzu.yuzu_emu"
         minSdk = 30
-        targetSdk = 34
+        targetSdk = 35
         versionName = getGitVersion()
 
         versionCode = if (System.getenv("AUTO_VERSIONED") == "true") {
@@ -105,6 +105,8 @@ android {
 
             resValue("string", "app_name_suffixed", "yuzu")
             isMinifyEnabled = true
+            isShrinkResources = true
+            isJniDebuggable = false
             isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android.txt"),
@@ -115,13 +117,12 @@ android {
         // builds a release build that doesn't need signing
         // Attaches 'debug' suffix to version and package name, allowing installation alongside the release build.
         register("relWithDebInfo") {
-            isDefault = true
             resValue("string", "app_name_suffixed", "yuzu Debug Release")
             signingConfig = signingConfigs.getByName("default")
             isMinifyEnabled = true
             isDebuggable = true
             proguardFiles(
-                getDefaultProguardFile("proguard-android.txt"),
+                getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
             versionNameSuffix = "-relWithDebInfo"
@@ -151,7 +152,7 @@ android {
 
     externalNativeBuild {
         cmake {
-            version = "3.22.1"
+            version = "4.0.1"
             path = file("../../../CMakeLists.txt")
         }
     }
@@ -168,7 +169,9 @@ android {
                     "-DYUZU_USE_BUNDLED_VCPKG=ON",
                     "-DYUZU_USE_BUNDLED_FFMPEG=ON",
                     "-DYUZU_ENABLE_LTO=ON",
-                    "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+                    "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+                    "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
+                    "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
                 )
 
                 cFlags(
