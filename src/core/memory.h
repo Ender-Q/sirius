@@ -79,7 +79,7 @@ public:
     Memory(const Memory&) = delete;
     Memory& operator=(const Memory&) = delete;
 
-    Memory(Memory&&) = default;
+    Memory(Memory&&) = delete;
     Memory& operator=(Memory&&) = delete;
 
     static constexpr bool HAS_FLUSH_INVALIDATION = false;
