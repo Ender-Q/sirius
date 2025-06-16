@@ -630,7 +630,6 @@ private:
     void WriteABGR(const OutputSurfaceConfig& output_surface_config);
 
     s32 id;
-    s32 nvdec_id{-1};
     u32 syncpoint;
 
     VicRegisters regs{};

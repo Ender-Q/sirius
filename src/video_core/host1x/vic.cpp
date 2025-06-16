@@ -136,11 +136,8 @@ void Vic::Execute() {
             }
 
             auto luma_offset{regs.surfaces[i][SurfaceIndex::Current].luma.Address()};
-            if (nvdec_id == -1) {
-                nvdec_id = frame_queue.VicFindNvdecFdFromOffset(luma_offset);
-            }
 
-            auto frame = frame_queue.GetFrame(nvdec_id, luma_offset);
+            auto frame = frame_queue.GetFrame(luma_offset);
             if (!frame.get()) {
                 LOG_ERROR(HW_GPU, "Vic {} failed to get frame with offset 0x{:X}", id, luma_offset);
                 continue;

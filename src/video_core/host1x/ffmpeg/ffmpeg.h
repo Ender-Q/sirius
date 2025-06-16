@@ -14,209 +14,206 @@
 #include "video_core/host1x/nvdec_common.h"
 
 extern "C" {
-#if defined(__GNUC__) || defined(__clang__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#endif
+    #if defined(__GNUC__) || defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wconversion"
+    #endif
 
-#include <libavcodec/avcodec.h>
-#include <libavutil/opt.h>
-#include <libavcodec/codec_internal.h>
+    #include <libavcodec/avcodec.h>
+    #include <libavutil/opt.h>
+    #include <libavutil/pixdesc.h>
 
-#if defined(__GNUC__) || defined(__clang__)
-#pragma GCC diagnostic pop
-#endif
+    #if defined(__GNUC__) || defined(__clang__)
+    #pragma GCC diagnostic pop
+    #endif
 }
 
 namespace Tegra {
-class MemoryManager;
+    class MemoryManager;
 }
 
 namespace FFmpeg {
 
-class Packet;
-class Frame;
-class Decoder;
-class HardwareContext;
-class DecoderContext;
-class DeinterlaceFilter;
+    class Packet;
+    class Frame;
+    class Decoder;
+    class HardwareContext;
+    class DecoderContext;
+    class DeinterlaceFilter;
 
-// Wraps an AVPacket, a container for compressed bitstream data.
-class Packet {
-public:
-    YUZU_NON_COPYABLE(Packet);
-    YUZU_NON_MOVEABLE(Packet);
+    // Wraps an AVPacket, a container for compressed bitstream data.
+    class Packet {
+    public:
+        YUZU_NON_COPYABLE(Packet);
+        YUZU_NON_MOVEABLE(Packet);
 
-    explicit Packet(std::span<const u8> data);
-    ~Packet();
+        explicit Packet(std::span<const u8> data);
+        ~Packet();
 
-    AVPacket* GetPacket() const {
-        return m_packet;
-    }
+        AVPacket* GetPacket() const {
+            return m_packet;
+        }
 
-private:
-    AVPacket* m_packet{};
-};
+    private:
+        AVPacket* m_packet{};
+    };
 
-// Wraps an AVFrame, a container for audio and video stream data.
-class Frame {
-public:
-    YUZU_NON_COPYABLE(Frame);
-    YUZU_NON_MOVEABLE(Frame);
+    // Wraps an AVFrame, a container for audio and video stream data.
+    class Frame {
+    public:
+        YUZU_NON_COPYABLE(Frame);
+        YUZU_NON_MOVEABLE(Frame);
 
-    explicit Frame();
-    ~Frame();
+        explicit Frame();
+        ~Frame();
 
-    int GetWidth() const {
-        return m_frame->width;
-    }
+        int GetWidth() const {
+            return m_frame->width;
+        }
 
-    int GetHeight() const {
-        return m_frame->height;
-    }
+        int GetHeight() const {
+            return m_frame->height;
+        }
 
-    AVPixelFormat GetPixelFormat() const {
-        return static_cast<AVPixelFormat>(m_frame->format);
-    }
+        AVPixelFormat GetPixelFormat() const {
+            return static_cast<AVPixelFormat>(m_frame->format);
+        }
 
-    int GetStride(int plane) const {
-        return m_frame->linesize[plane];
-    }
+        int GetStride(int plane) const {
+            return m_frame->linesize[plane];
+        }
 
-    int* GetStrides() const {
-        return m_frame->linesize;
-    }
+        int* GetStrides() const {
+            return m_frame->linesize;
+        }
 
-    u8* GetData(int plane) const {
-        return m_frame->data[plane];
-    }
+        u8* GetData(int plane) const {
+            return m_frame->data[plane];
+        }
 
-    const u8* GetPlane(int plane) const {
-        return m_frame->data[plane];
-    }
+        const u8* GetPlane(int plane) const {
+            return m_frame->data[plane];
+        }
 
-    u8** GetPlanes() const {
-        return m_frame->data;
-    }
+        u8** GetPlanes() const {
+            return m_frame->data;
+        }
 
-    void SetFormat(int format) {
-        m_frame->format = format;
-    }
+        void SetFormat(int format) {
+            m_frame->format = format;
+        }
 
-    bool IsInterlaced() const {
-#if defined(FF_API_INTERLACED_FRAME) || LIBAVUTIL_VERSION_MAJOR >= 59
-        return m_frame->flags & AV_FRAME_FLAG_INTERLACED;
-#else
-        return m_frame->interlaced_frame;
-#endif
-    }
+        bool IsInterlaced() const {
+            #if defined(FF_API_INTERLACED_FRAME) || LIBAVUTIL_VERSION_MAJOR >= 59
+            return m_frame->flags & AV_FRAME_FLAG_INTERLACED;
+            #else
+            return m_frame->interlaced_frame;
+            #endif
+        }
 
-    bool IsHardwareDecoded() const {
-        return m_frame->hw_frames_ctx != nullptr;
-    }
+        bool IsHardwareDecoded() const {
+            return m_frame->hw_frames_ctx != nullptr;
+        }
 
-    AVFrame* GetFrame() const {
-        return m_frame;
-    }
+        AVFrame* GetFrame() const {
+            return m_frame;
+        }
 
-private:
-    AVFrame* m_frame{};
-};
+    private:
+        AVFrame* m_frame{};
+    };
 
-// Wraps an AVCodec, a type containing information about a codec.
-class Decoder {
-public:
-    YUZU_NON_COPYABLE(Decoder);
-    YUZU_NON_MOVEABLE(Decoder);
+    // Wraps an AVCodec, a type containing information about a codec.
+    class Decoder {
+    public:
+        YUZU_NON_COPYABLE(Decoder);
+        YUZU_NON_MOVEABLE(Decoder);
 
-    explicit Decoder(Tegra::Host1x::NvdecCommon::VideoCodec codec);
-    ~Decoder() = default;
+        explicit Decoder(Tegra::Host1x::NvdecCommon::VideoCodec codec);
+        ~Decoder() = default;
 
-    bool SupportsDecodingOnDevice(AVPixelFormat* out_pix_fmt, AVHWDeviceType type) const;
+        bool SupportsDecodingOnDevice(AVPixelFormat* out_pix_fmt, AVHWDeviceType type) const;
 
-    const AVCodec* GetCodec() const {
-        return m_codec;
-    }
+        const AVCodec* GetCodec() const {
+            return m_codec;
+        }
 
-private:
-    const AVCodec* m_codec{};
-};
+    private:
+        const AVCodec* m_codec{};
+    };
 
-// Wraps AVBufferRef for an accelerated decoder.
-class HardwareContext {
-public:
-    YUZU_NON_COPYABLE(HardwareContext);
-    YUZU_NON_MOVEABLE(HardwareContext);
+    // Wraps AVBufferRef for an accelerated decoder.
+    class HardwareContext {
+    public:
+        YUZU_NON_COPYABLE(HardwareContext);
+        YUZU_NON_MOVEABLE(HardwareContext);
 
-    static std::vector<AVHWDeviceType> GetSupportedDeviceTypes();
+        static std::vector<AVHWDeviceType> GetSupportedDeviceTypes();
 
-    explicit HardwareContext() = default;
-    ~HardwareContext();
+        explicit HardwareContext() = default;
+        ~HardwareContext();
 
-    bool InitializeForDecoder(DecoderContext& decoder_context, const Decoder& decoder);
+        bool InitializeForDecoder(DecoderContext& decoder_context, const Decoder& decoder);
 
-    AVBufferRef* GetBufferRef() const {
-        return m_gpu_decoder;
-    }
+        AVBufferRef* GetBufferRef() const {
+            return m_gpu_decoder;
+        }
 
-private:
-    bool InitializeWithType(AVHWDeviceType type);
+    private:
+        bool InitializeWithType(AVHWDeviceType type);
 
-    AVBufferRef* m_gpu_decoder{};
-};
+        AVBufferRef* m_gpu_decoder{};
+    };
 
-// Wraps an AVCodecContext.
-class DecoderContext {
-public:
-    YUZU_NON_COPYABLE(DecoderContext);
-    YUZU_NON_MOVEABLE(DecoderContext);
+    // Wraps an AVCodecContext.
+    class DecoderContext {
+    public:
+        YUZU_NON_COPYABLE(DecoderContext);
+        YUZU_NON_MOVEABLE(DecoderContext);
 
-    explicit DecoderContext(const Decoder& decoder);
-    ~DecoderContext();
+        explicit DecoderContext(const Decoder& decoder);
+        ~DecoderContext();
 
-    void InitializeHardwareDecoder(const HardwareContext& context, AVPixelFormat hw_pix_fmt);
-    bool OpenContext(const Decoder& decoder);
-    bool SendPacket(const Packet& packet);
-    std::shared_ptr<Frame> ReceiveFrame();
+        void InitializeHardwareDecoder(const HardwareContext& context, AVPixelFormat hw_pix_fmt);
+        bool OpenContext(const Decoder& decoder);
+        bool SendPacket(const Packet& packet);
+        std::shared_ptr<Frame> ReceiveFrame();
 
-    AVCodecContext* GetCodecContext() const {
-        return m_codec_context;
-    }
+        AVCodecContext* GetCodecContext() const {
+            return m_codec_context;
+        }
 
-    bool UsingDecodeOrder() const {
-        return m_decode_order;
-    }
+        // Removed UsingDecodeOrder() as m_decode_order is no longer a direct member
+        // and its original purpose was tied to FF_THREAD_FRAME.
 
-private:
-    const Decoder& m_decoder;
-    AVCodecContext* m_codec_context{};
-    s32 m_got_frame{};
-    std::shared_ptr<Frame> m_temp_frame{};
-    bool m_decode_order{};
-};
+    private:
+        const Decoder& m_decoder;
+        AVCodecContext* m_codec_context{};
+        s32 m_got_frame{}; // This member is no longer used, can be removed.
+        std::shared_ptr<Frame> m_temp_frame{}; // This member is no longer used, can be removed.
+        // bool m_decode_order{}; // Removed due to removal of FF_THREAD_FRAME
+    };
 
-class DecodeApi {
-public:
-    YUZU_NON_COPYABLE(DecodeApi);
-    YUZU_NON_MOVEABLE(DecodeApi);
+    class DecodeApi {
+    public:
+        YUZU_NON_COPYABLE(DecodeApi);
+        YUZU_NON_MOVEABLE(DecodeApi);
 
-    DecodeApi() = default;
-    ~DecodeApi() = default;
+        DecodeApi() = default;
+        ~DecodeApi() = default;
 
-    bool Initialize(Tegra::Host1x::NvdecCommon::VideoCodec codec);
-    void Reset();
+        bool Initialize(Tegra::Host1x::NvdecCommon::VideoCodec codec);
+        void Reset();
 
-    bool UsingDecodeOrder() const {
-        return m_decoder_context->UsingDecodeOrder();
-    }
+        // Removed UsingDecodeOrder() as its underlying logic is removed.
 
-    bool SendPacket(std::span<const u8> packet_data);
-    std::shared_ptr<Frame> ReceiveFrame();
+        bool SendPacket(std::span<const u8> packet_data);
+        std::shared_ptr<Frame> ReceiveFrame();
 
-private:
-    std::optional<FFmpeg::Decoder> m_decoder;
-    std::optional<FFmpeg::DecoderContext> m_decoder_context;
-    std::optional<FFmpeg::HardwareContext> m_hardware_context;
-};
+    private:
+        std::optional<FFmpeg::Decoder> m_decoder;
+        std::optional<FFmpeg::DecoderContext> m_decoder_context;
+        std::optional<FFmpeg::HardwareContext> m_hardware_context;
+    };
 
 } // namespace FFmpeg

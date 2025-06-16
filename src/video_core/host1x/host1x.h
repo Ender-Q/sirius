@@ -40,29 +40,6 @@ public:
         m_decode_order.erase(fd);
     }
 
-    s32 VicFindNvdecFdFromOffset(u64 search_offset) {
-        std::scoped_lock l{m_mutex};
-        // Vic does not know which nvdec is producing frames for it, so search all the fds here for
-        // the given offset.
-        for (auto& map : m_presentation_order) {
-            for (auto& [offset, _] : map.second) {
-                if (offset == search_offset) {
-                    return map.first;
-                }
-            }
-        }
-
-        for (auto& map : m_decode_order) {
-            for (auto& [offset, _] : map.second) {
-                if (offset == search_offset) {
-                    return map.first;
-                }
-            }
-        }
-
-        return -1;
-    }
-
     void PushPresentOrder(s32 fd, u64 offset, std::shared_ptr<FFmpeg::Frame>&& frame) {
         std::scoped_lock l{m_mutex};
         auto map = m_presentation_order.find(fd);
@@ -78,23 +55,29 @@ public:
         if (map == m_decode_order.end()) {
             return;
         }
-        map->second.insert_or_assign(offset, std::move(frame));
+        map->second.emplace(offset, std::move(frame));
+        m_frame_available_cv.notify_all();
     }
 
-    std::shared_ptr<FFmpeg::Frame> GetFrame(s32 fd, u64 offset) {
-        if (fd == -1) {
-            return {};
-        }
+    std::shared_ptr<FFmpeg::Frame> GetFrame(u64 offset) {
+        std::unique_lock l{m_mutex};
 
-        std::scoped_lock l{m_mutex};
-        auto present_map = m_presentation_order.find(fd);
-        if (present_map != m_presentation_order.end() && present_map->second.size() > 0) {
-            return GetPresentOrderLocked(fd);
-        }
-
-        auto decode_map = m_decode_order.find(fd);
-        if (decode_map != m_decode_order.end() && decode_map->second.size() > 0) {
-            return GetDecodeOrderLocked(fd, offset);
+        // Wait for the frame to become available, with a timeout to prevent deadlocks.
+        if (m_frame_available_cv.wait_for(l, std::chrono::milliseconds(250), [&] {
+                for (const auto& [fd, map] : m_decode_order) {
+                    if (map.contains(offset)) {
+                        return true;
+                    }
+                }
+                return false;
+            })) {
+            // Search all decoders for the frame with the matching offset.
+            for (auto& [decoder_id, frame_map] : m_decode_order) {
+                auto node = frame_map.extract(offset);
+                if (!node.empty()) {
+                    return std::move(node.mapped());
+                }
+            }
         }
 
         return {};
@@ -128,6 +111,7 @@ private:
     std::mutex m_mutex{};
     std::unordered_map<s32, std::deque<std::pair<u64, FramePtr>>> m_presentation_order;
     std::unordered_map<s32, std::unordered_map<u64, FramePtr>> m_decode_order;
+    std::condition_variable m_frame_available_cv;
 };
 
 enum class ChannelType : u32 {
