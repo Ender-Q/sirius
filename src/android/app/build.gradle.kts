@@ -29,7 +29,7 @@ android {
     namespace = "org.yuzu.yuzu_emu"
 
     compileSdkVersion = "android-35"
-    ndkVersion = "29.0.13113456 rc1"
+    ndkVersion = "29.0.13846066"
 
     buildFeatures {
         viewBinding = true
