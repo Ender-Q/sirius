@@ -112,7 +112,7 @@ void NintendoFigurineDatabase::CleanDatabase() {
 
 void NintendoFigurineDatabase::CorruptCrc() {
     crc = GenerateDatabaseCrc();
-    crc = ~crc;
+    crc = static_cast<u16>(~crc);
 }
 
 Result NintendoFigurineDatabase::CheckIntegrity() {
