@@ -389,6 +389,9 @@ endif()
 if (UNIX AND NOT APPLE)
     target_link_libraries(yuzu PRIVATE Qt6::DBus)
 endif()
+if (NEED_QT_GUI_PRIVATE_COMPONENT)
+    target_link_libraries(yuzu PRIVATE Qt6::GuiPrivate)
+endif()
 
 target_compile_definitions(yuzu PRIVATE
     # Use QStringBuilder for string concatenation to reduce
