@@ -234,7 +234,7 @@ dependencies {
     implementation("com.google.android.material:material:1.13.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
-    implementation("io.coil-kt:coil:2.7.0")
+    implementation("io.coil-kt.coil3:coil:3.1.0")
     implementation("androidx.core:core-splashscreen:1.2.0")
     implementation("androidx.window:window:1.5.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0")

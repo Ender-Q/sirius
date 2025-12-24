@@ -12,15 +12,21 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.LifecycleOwner
-import coil.ImageLoader
-import coil.decode.DataSource
-import coil.fetch.DrawableResult
-import coil.fetch.FetchResult
-import coil.fetch.Fetcher
-import coil.key.Keyer
-import coil.memory.MemoryCache
-import coil.request.ImageRequest
-import coil.request.Options
+import coil3.ImageLoader
+import coil3.asImage
+import coil3.decode.DataSource
+import coil3.fetch.FetchResult
+import coil3.fetch.Fetcher
+import coil3.fetch.ImageFetchResult
+import coil3.key.Keyer
+import coil3.memory.MemoryCache
+import coil3.request.ImageRequest
+import coil3.request.Options
+import coil3.request.SuccessResult
+import coil3.request.error
+import coil3.request.lifecycle
+import coil3.request.target
+import coil3.toBitmap
 import org.yuzu.yuzu_emu.R
 import org.yuzu.yuzu_emu.YuzuApplication
 import org.yuzu.yuzu_emu.model.Game
@@ -30,8 +36,11 @@ class GameIconFetcher(
     private val options: Options
 ) : Fetcher {
     override suspend fun fetch(): FetchResult {
-        return DrawableResult(
-            drawable = decodeGameIcon(game.path)!!.toDrawable(options.context.resources),
+        val bitmap = decodeGameIcon(game.path)!!
+        val image = bitmap.asImage()
+
+        return ImageFetchResult(
+            image = image,
             isSampled = false,
             dataSource = DataSource.DISK
         )
@@ -64,8 +73,8 @@ object GameIconUtils {
             add(GameIconFetcher.Factory())
         }
         .memoryCache {
-            MemoryCache.Builder(YuzuApplication.appContext)
-                .maxSizePercent(0.25)
+            MemoryCache.Builder()
+                .maxSizePercent(YuzuApplication.appContext, 0.25)
                 .build()
         }
         .build()
@@ -85,8 +94,19 @@ object GameIconUtils {
             .lifecycle(lifecycleOwner)
             .error(R.drawable.default_icon)
             .build()
-        return imageLoader.execute(request)
-            .drawable!!.toBitmap(config = Bitmap.Config.ARGB_8888)
+
+        val result = imageLoader.execute(request)
+
+        return if (result is SuccessResult) {
+            result.image.toBitmap()
+        } else {
+            val default = ResourcesCompat.getDrawable(
+                YuzuApplication.appContext.resources,
+                R.drawable.default_icon,
+                null
+            )
+            default!!.toBitmap()
+        }
     }
 
     suspend fun getShortcutIcon(lifecycleOwner: LifecycleOwner, game: Game): IconCompat {
@@ -95,9 +115,12 @@ object GameIconUtils {
             R.drawable.shortcut,
             null
         ) as LayerDrawable
+
+        val iconBitmap = getGameIcon(lifecycleOwner, game)
+
         layerDrawable.setDrawableByLayerId(
             R.id.shortcut_foreground,
-            getGameIcon(lifecycleOwner, game).toDrawable(YuzuApplication.appContext.resources)
+            iconBitmap.toDrawable(YuzuApplication.appContext.resources)
         )
         val inset = YuzuApplication.appContext.resources
             .getDimensionPixelSize(R.dimen.icon_inset)
