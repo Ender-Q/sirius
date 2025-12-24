@@ -11,10 +11,10 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
-    kotlin("plugin.serialization") version "2.1.20-RC2"
+    kotlin("plugin.serialization") version "2.2.21"
     id("androidx.navigation.safeargs.kotlin")
-    id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
-    id("com.github.triplet.play") version "3.12.1"
+    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
+    id("com.github.triplet.play") version "3.12.2"
 }
 
 /**
@@ -28,8 +28,8 @@ val autoVersion = (((System.currentTimeMillis() / 1000) - 1451606400) / 10).toIn
 android {
     namespace = "org.yuzu.yuzu_emu"
 
-    compileSdkVersion = "android-35"
-    ndkVersion = "29.0.14033849"
+    compileSdkVersion = "android-36"
+    ndkVersion = "29.0.14206865"
 
     buildFeatures {
         viewBinding = true
@@ -38,10 +38,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
-    }
-
-    kotlinOptions {
-        jvmTarget = "21"
     }
 
     packaging {
@@ -56,8 +52,8 @@ android {
     defaultConfig {
         // TODO If this is ever modified, change application_id in strings.xml
         applicationId = "org.yuzu.yuzu_emu"
-        minSdk = 30
-        targetSdk = 35
+        minSdk = 35
+        targetSdk = 36
         versionName = getGitVersion()
 
         versionCode = if (System.getenv("AUTO_VERSIONED") == "true") {
@@ -196,8 +192,8 @@ android {
     }
 }
 
-tasks.create<Delete>("ktlintReset") {
-    delete(File(buildDir.path + File.separator + "intermediates/ktLint"))
+tasks.register<Delete>("ktlintReset") {
+    delete(File(layout.buildDirectory.get().asFile.path + File.separator + "intermediates/ktLint"))
 }
 
 val showFormatHelp = {
@@ -214,13 +210,6 @@ ktlint {
     version.set("1.3.1")
     android.set(true)
     ignoreFailures.set(false)
-    disabledRules.set(
-        setOf(
-            "no-wildcard-imports",
-            "package-name",
-            "import-ordering"
-        )
-    )
     reporters {
         reporter(ReporterType.CHECKSTYLE)
     }
@@ -236,24 +225,23 @@ play {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.core:core-ktx:1.17.0")
+    implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-    implementation("androidx.fragment:fragment-ktx:1.8.6")
-    implementation("androidx.documentfile:documentfile:1.0.1")
-    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.fragment:fragment-ktx:1.8.9")
+    implementation("androidx.documentfile:documentfile:1.1.0")
+    implementation("com.google.android.material:material:1.13.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
     implementation("io.coil-kt:coil:2.7.0")
-    implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.window:window:1.3.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.8.8")
-    implementation("androidx.navigation:navigation-ui-ktx:2.8.8")
+    implementation("androidx.core:core-splashscreen:1.2.0")
+    implementation("androidx.window:window:1.5.1")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.9.6")
+    implementation("androidx.navigation:navigation-ui-ktx:2.9.6")
     implementation("info.debatty:java-string-similarity:2.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 }
 
 fun runGitCommand(command: List<String>): String {
@@ -292,3 +280,9 @@ fun getGitHash(): String =
 
 fun getBranch(): String =
     runGitCommand(listOf("git", "rev-parse", "--abbrev-ref", "HEAD")).ifEmpty { "dummy-hash" }
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+    }
+}

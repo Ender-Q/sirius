@@ -63,7 +63,7 @@ class GamesFragment : Fragment() {
             setProgressBackgroundColorSchemeColor(
                 MaterialColors.getColor(
                     binding.swipeRefresh,
-                    com.google.android.material.R.attr.colorPrimary
+                    androidx.appcompat.R.attr.colorPrimary
                 )
             )
             setColorSchemeColors(
