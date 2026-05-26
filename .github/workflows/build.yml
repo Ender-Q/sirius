@@ -19,9 +19,12 @@ jobs:
           git submodule sync --recursive
           git submodule update --init --recursive
 
-      - name: Install Vulkan SDK
+      - name: Install glslangValidator
         shell: pwsh
-        run: .\.ci\scripts\windows\install-vulkan-sdk.ps1
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/KhronosGroup/glslang/releases/download/main-tot/glslang-master-windows-Release.zip" -OutFile "$env:TEMP\glslang.zip"
+          Expand-Archive -Path "$env:TEMP\glslang.zip" -DestinationPath "C:\glslang" -Force
+          Add-Content $env:GITHUB_PATH "C:\glslang\bin"
 
       - name: Install Qt6
         shell: pwsh
