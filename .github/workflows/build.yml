@@ -16,14 +16,12 @@ jobs:
         run: |
           $url = "https://x-access-token:$env:GITHUB_TOKEN@github.com/$env:GITHUB_REPOSITORY.git"
           git clone $url "$env:GITHUB_WORKSPACE"
-
-      - name: Init submodules
-        shell: pwsh
-        run: |
-          $url = "https://x-access-token:$env:GITHUB_TOKEN@github.com/$env:GITHUB_REPOSITORY.git"
-          git remote set-url origin $url
           git submodule sync --recursive
-          git submodule update --init --recursive 2>&1 | Out-String
+          git submodule update --init --recursive
+
+      - name: Install Vulkan SDK
+        shell: pwsh
+        run: .\.ci\scripts\windows\install-vulkan-sdk.ps1
 
       - name: Install Qt6
         shell: pwsh
@@ -31,43 +29,17 @@ jobs:
           pip install aqtinstall -q 2>&1 | Out-Null
           aqt install-qt windows desktop 6.8.0 win64_msvc2022_64 --outputdir C:\Qt -m qtmultimedia
           Add-Content $env:GITHUB_PATH "C:\Qt\6.8.0\msvc2022_64\bin"
-          Add-Content $env:GITHUB_ENV "Qt6_DIR=C:\Qt\6.8.0\msvc2022_64\lib\cmake\Qt6"
-
-      - name: Find Vulkan SDK
-        shell: pwsh
-        run: |
-          $vkSdk = Get-ChildItem "C:\VulkanSDK" -ErrorAction SilentlyContinue | Sort-Object Name -Descending | Select-Object -First 1
-          if ($vkSdk) {
-            $binDir = "$($vkSdk.FullName)\Bin"
-            if (Test-Path $binDir) {
-              Add-Content $env:GITHUB_PATH $binDir
-              Write-Output "Found Vulkan SDK at $binDir"
-              return
-            }
-          }
-          $progFiles = Get-ChildItem "C:\Program Files\VulkanSDK" -ErrorAction SilentlyContinue | Sort-Object Name -Descending | Select-Object -First 1
-          if ($progFiles) {
-            $binDir = "$($progFiles.FullName)\Bin"
-            if (Test-Path $binDir) {
-              Add-Content $env:GITHUB_PATH $binDir
-              Write-Output "Found Vulkan SDK at $binDir"
-              return
-            }
-          }
-          Write-Output "Vulkan SDK not found, installing..."
-          Invoke-WebRequest -Uri "https://github.com/KhronosGroup/glslang/releases/download/main/glslang-master-windows-x64-Release.zip" -OutFile "$env:TEMP\glslang.zip"
-          Expand-Archive -Path "$env:TEMP\glslang.zip" -DestinationPath "C:\vk" -Force
-          Add-Content $env:GITHUB_PATH "C:\vk\bin"
-
-      - name: Verify glslangValidator
-        shell: pwsh
-        run: glslangValidator --version
 
       - name: Configure CMake
-        run: cmake -B build -S . -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Release -DYUZU_USE_BUNDLED_QT=OFF -DENABLE_SDL2=OFF -DENABLE_QT6=ON -DYUZU_ENABLE_LTO=ON -DYUZU_TESTS=OFF -DYUZU_USE_BUNDLED_VCPKG=ON
+        shell: pwsh
+        run: |
+          $env:Qt6_DIR = "C:\Qt\6.8.0\msvc2022_64\lib\cmake\Qt6"
+          glslangValidator --version
+          cmake -B build -S . -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Release -DYUZU_USE_BUNDLED_QT=OFF -DENABLE_SDL2=OFF -DENABLE_QT6=ON -DYUZU_USE_BUNDLED_VCPKG=ON -DYUZU_TESTS=OFF
 
       - name: Build
-        run: cmake --build build --config Release -j $env:NUMBER_OF_PROCESSORS
+        shell: pwsh
+        run: cmake --build build --config Release -j $env:NUMBER_OF_PROCESSORS --verbose
 
       - uses: actions/upload-artifact@v4
         with:
