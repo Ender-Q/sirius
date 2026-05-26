@@ -32,7 +32,7 @@ struct Range {
     static constexpr std::array sizes{
         0x1000ULL << 10,  0x1400ULL << 10,  0x1800ULL << 10,  0x1c00ULL << 10, 0x2000ULL << 10,
         0x3200ULL << 10,  0x4000ULL << 10,  0x6000ULL << 10,  0x8000ULL << 10, 0xA000ULL << 10,
-        0x10000ULL << 10, 0x18000ULL << 10, 0x20000ULL << 10,
+        0x10000ULL << 10, 0x18000ULL << 10, 0x20000ULL << 10, 0x30000ULL << 10, 0x40000ULL << 10,
     };
     static_assert(std::is_sorted(sizes.begin(), sizes.end()));
 

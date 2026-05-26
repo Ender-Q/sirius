@@ -37,8 +37,8 @@ void DiscordImpl::Pause() {
 }
 
 void DiscordImpl::UpdateGameStatus(bool use_default) {
-    const std::string default_text = "yuzu is an emulator for the Nintendo Switch";
-    const std::string default_image = "yuzu_logo";
+    const std::string default_text = "Sirius Emulator";
+    const std::string default_image = "sirius_logo";
     const std::string tinfoil_base_url = "https://tinfoil.media/ti/";
     s64 start_time = std::chrono::duration_cast<std::chrono::seconds>(
                          std::chrono::system_clock::now().time_since_epoch())
@@ -66,8 +66,8 @@ void DiscordImpl::UpdateGameStatus(bool use_default) {
 }
 
 void DiscordImpl::Update() {
-    const std::string default_text = "yuzu is an emulator for the Nintendo Switch";
-    const std::string default_image = "yuzu_logo";
+    const std::string default_text = "Sirius Emulator";
+    const std::string default_image = "sirius_logo";
 
     if (system.IsPoweredOn()) {
         system.GetAppLoader().ReadTitle(game_title);

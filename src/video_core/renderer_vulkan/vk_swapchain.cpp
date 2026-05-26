@@ -213,16 +213,18 @@ void Swapchain::CreateSwapchain(const VkSurfaceCapabilitiesKHR& capabilities) {
     present_mode = ChooseSwapPresentMode(has_imm, has_mailbox, has_fifo_relaxed);
 
     u32 requested_image_count{capabilities.minImageCount + 1};
-    // Ensure Triple buffering if possible.
     if (capabilities.maxImageCount > 0) {
         if (requested_image_count > capabilities.maxImageCount) {
             requested_image_count = capabilities.maxImageCount;
         } else {
+            // Reduce to double buffering on integrated GPUs to save VRAM
+            // Triple buffering adds latency and memory pressure on iGPUs
+            const u32 target = device.IsIntegrated() ? 2U : 3U;
             requested_image_count =
-                std::max(requested_image_count, std::min(3U, capabilities.maxImageCount));
+                std::max(requested_image_count, std::min(target, capabilities.maxImageCount));
         }
     } else {
-        requested_image_count = std::max(requested_image_count, 3U);
+        requested_image_count = std::max(requested_image_count, device.IsIntegrated() ? 2U : 3U);
     }
     VkSwapchainCreateInfoKHR swapchain_ci{
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,

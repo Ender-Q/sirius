@@ -51,6 +51,7 @@
 #include "hid_core/frontend/emulated_controller.h"
 #include "hid_core/hid_core.h"
 #include "yuzu/multiplayer/state.h"
+#include "splash.h"
 #include "yuzu/util/controller_navigation.h"
 
 // These are wrappers to avoid the calls to CreateDirectory and CreateFile because of the Windows
@@ -78,6 +79,7 @@ static FileSys::VirtualFile VfsDirectoryCreateFileWrapper(const FileSys::Virtual
 #include <QMessageBox>
 #include <QProgressBar>
 #include <QProgressDialog>
+#include <QTimer>
 #include <QPushButton>
 #include <QScreen>
 #include <QShortcut>
@@ -350,13 +352,13 @@ GMainWindow::GMainWindow(std::unique_ptr<QtConfig> config_, bool has_broken_vulk
     const auto description = std::string(Common::g_scm_desc);
     const auto build_id = std::string(Common::g_build_id);
 
-    const auto yuzu_build = fmt::format("yuzu Development Build | {}-{}", branch_name, description);
+    const auto sirius_build = fmt::format("Sirius Development Build | {}-{}", branch_name, description);
     const auto override_build =
         fmt::format(fmt::runtime(std::string(Common::g_title_bar_format_idle)), build_id);
-    const auto yuzu_build_version = override_build.empty() ? yuzu_build : override_build;
+    const auto sirius_build_version = override_build.empty() ? sirius_build : override_build;
     const auto processor_count = std::thread::hardware_concurrency();
 
-    LOG_INFO(Frontend, "yuzu Version: {}", yuzu_build_version);
+    LOG_INFO(Frontend, "Sirius Version: {}", sirius_build_version);
     LogRuntimes();
 #ifdef ARCHITECTURE_x86_64
     const auto& caps = Common::GetCPUCaps();
@@ -3070,7 +3072,7 @@ void GMainWindow::OnGameListCreateShortcut(u64 program_id, const std::string& ga
             this, GMainWindow::CREATE_SHORTCUT_MSGBOX_FULLSCREEN_YES, qt_game_title)) {
         arguments = "-f " + arguments;
     }
-    const std::string comment = fmt::format("Start {:s} with the yuzu Emulator", game_title);
+    const std::string comment = fmt::format("Start {:s} with the Sirius Emulator", game_title);
     const std::string categories = "Game;Emulator;Qt;";
     const std::string keywords = "Switch;Nintendo;";
 
@@ -4525,10 +4527,9 @@ void GMainWindow::UpdateWindowTitle(std::string_view title_name, std::string_vie
     const auto description = std::string(Common::g_scm_desc);
     const auto build_id = std::string(Common::g_build_id);
 
-    const auto yuzu_title = fmt::format("yuzu | {}-{}", branch_name, description);
-    const auto override_title =
-        fmt::format(fmt::runtime(std::string(Common::g_title_bar_format_idle)), build_id);
-    const auto window_title = override_title.empty() ? yuzu_title : override_title;
+    const auto sirius_title = fmt::format("Sirius | {}-{}", branch_name, description);
+    const auto override_title = fmt::format(fmt::runtime(std::string(Common::g_title_bar_format_idle)), build_id);
+    const auto window_title = override_title.empty() ? sirius_title : override_title;
 
     if (title_name.empty()) {
         setWindowTitle(QString::fromStdString(window_title));
@@ -5268,8 +5269,8 @@ int main(int argc, char* argv[]) {
     Common::ConfigureNvidiaEnvironmentFlags();
 
     // Init settings params
-    QCoreApplication::setOrganizationName(QStringLiteral("yuzu team"));
-    QCoreApplication::setApplicationName(QStringLiteral("yuzu"));
+    QCoreApplication::setOrganizationName(QStringLiteral("nullworks"));
+    QCoreApplication::setApplicationName(QStringLiteral("Sirius"));
 
 #ifdef _WIN32
     // Increases the maximum open file limit to 8192
@@ -5293,7 +5294,7 @@ int main(int argc, char* argv[]) {
 
     // Fix the Wayland appId. This needs to match the name of the .desktop file without the .desktop
     // suffix.
-    QGuiApplication::setDesktopFileName(QStringLiteral("org.yuzu_emu.yuzu"));
+    QGuiApplication::setDesktopFileName(QStringLiteral("org.nullworks.sirius"));
 #endif
 
     SetHighDPIAttributes();
@@ -5327,9 +5328,20 @@ int main(int argc, char* argv[]) {
     // generating shaders
     setlocale(LC_ALL, "C");
 
+    // Show nullworks splash screen
+    auto* splash = new SplashScreen();
+    splash->Start();
+
     GMainWindow main_window{std::move(config), has_broken_vulkan};
     // After settings have been loaded by GMainWindow, apply the filter
     main_window.show();
+
+    // Close splash once main window is ready
+    QTimer::singleShot(3500, splash, [splash, &main_window]() {
+        splash->CloseSplash();
+        main_window.raise();
+        main_window.activateWindow();
+    });
 
     QObject::connect(&app, &QGuiApplication::applicationStateChanged, &main_window,
                      &GMainWindow::OnAppFocusStateChanged);

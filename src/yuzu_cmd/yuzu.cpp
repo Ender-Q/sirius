@@ -91,7 +91,7 @@ static void PrintHelp(const char* argv0) {
 }
 
 static void PrintVersion() {
-    std::cout << "yuzu " << Common::g_scm_branch << " " << Common::g_scm_desc << std::endl;
+    std::cout << "Sirius " << Common::g_scm_branch << " " << Common::g_scm_desc << std::endl;
 }
 
 static void OnStateChanged(const Network::RoomMember::State& state) {

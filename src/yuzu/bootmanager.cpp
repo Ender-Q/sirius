@@ -287,7 +287,7 @@ GRenderWindow::GRenderWindow(GMainWindow* parent, EmuThread* emu_thread_,
                              Core::System& system_)
     : QWidget(parent),
       emu_thread(emu_thread_), input_subsystem{std::move(input_subsystem_)}, system{system_} {
-    setWindowTitle(QStringLiteral("yuzu %1 | %2-%3")
+    setWindowTitle(QStringLiteral("Sirius %1 | %2-%3")
                        .arg(QString::fromUtf8(Common::g_build_name),
                             QString::fromUtf8(Common::g_scm_branch),
                             QString::fromUtf8(Common::g_scm_desc)));

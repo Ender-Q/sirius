@@ -702,6 +702,22 @@ public:
         return properties.driver.driverID == VK_DRIVER_ID_NVIDIA_PROPRIETARY;
     }
 
+    bool IsIntel() const noexcept {
+        return properties.driver.driverID == VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS ||
+               properties.driver.driverID == VK_DRIVER_ID_INTEL_OPEN_SOURCE_MESA;
+    }
+
+    bool IsIntegrated() const noexcept {
+        return is_integrated;
+    }
+
+    bool IsIntelIntegrated() const noexcept {
+        return is_integrated && IsIntel();
+    }
+
+    /// Applies performance optimizations for integrated GPUs (Intel UHD, AMD Radeon, etc.)
+    static void ApplyIntegratedGpuOptimizations();
+
     NvidiaArchitecture GetNvidiaArch() const noexcept {
         return nvidia_arch;
     }

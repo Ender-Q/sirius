@@ -224,7 +224,7 @@ void EmuWindow_SDL2::WaitEvent() {
     if (current_time > last_time + 2000) {
         const auto results = system.GetAndResetPerfStats();
         const auto title =
-            fmt::format("yuzu {} | {}-{} | FPS: {:.0f} ({:.0f}%)", Common::g_build_fullname,
+                            fmt::format("Sirius {} | {}-{} | FPS: {:.0f} ({:.0f}%)", Common::g_build_fullname,
                         Common::g_scm_branch, Common::g_scm_desc, results.average_game_fps,
                         results.emulation_speed * 100.0);
         SDL_SetWindowTitle(render_window, title.c_str());

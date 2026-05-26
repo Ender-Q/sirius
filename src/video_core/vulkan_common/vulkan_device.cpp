@@ -750,6 +750,10 @@ Device::Device(VkInstance instance_, vk::PhysicalDevice physical_, VkSurfaceKHR 
     };
 
     vk::Check(vmaCreateAllocator(&allocator_info, &allocator));
+
+    if (is_integrated) {
+        ApplyIntegratedGpuOptimizations();
+    }
 }
 
 Device::~Device() {
@@ -1389,6 +1393,43 @@ std::vector<VkDeviceQueueCreateInfo> Device::GetDeviceQueueCreateInfos() const {
     }
 
     return queue_cis;
+}
+
+void Device::ApplyIntegratedGpuOptimizations() {
+    LOG_INFO(Render_Vulkan, "Applying integrated GPU performance optimizations");
+
+    // Reduce resolution to 0.75x to save GPU fill rate
+    Settings::values.resolution_setup.SetValue(Settings::ResolutionSetup::Res3_4X);
+
+    // Lower GPU accuracy to normal (fewer correctness checks = faster)
+    Settings::values.gpu_accuracy.SetValue(Settings::GpuAccuracy::Normal);
+
+    // Use CPU for ASTC texture decoding (iGPU ASTC decoder is slow on Intel)
+    Settings::values.accelerate_astc.SetValue(Settings::AstcDecodeMode::Cpu);
+
+    // Use Mailbox vsync for lower latency (no FIFO frame pacing bottleneck)
+    Settings::values.vsync_mode.SetValue(Settings::VSyncMode::Mailbox);
+
+    // Enable async shader compilation to prevent stuttering
+    Settings::values.use_asynchronous_shaders.SetValue(true);
+
+    // Enable compute pipelines to offload work to GPU compute
+    Settings::values.enable_compute_pipelines.SetValue(true);
+
+    // Disable reactive flushing to save GPU cache operations
+    Settings::values.use_reactive_flushing.SetValue(false);
+
+    // Disable barrier feedback loops to reduce pipeline barriers
+    Settings::values.barrier_feedback_loops.SetValue(false);
+
+    // Use nearest neighbor scaling (faster than bilinear/bicubic)
+    Settings::values.scaling_filter.SetValue(Settings::ScalingFilter::NearestNeighbor);
+
+    // Use aggressive VRAM mode for better shared memory utilization
+    Settings::values.vram_usage_mode.SetValue(Settings::VramUsageMode::Aggressive);
+
+    // Always optimize SPIR-V output for better GPU shader performance
+    Settings::values.optimize_spirv_output.SetValue(Settings::SpirvOptimizeMode::Always);
 }
 
 } // namespace Vulkan

@@ -272,9 +272,10 @@ size_t GetTotalPipelineWorkers() {
     if (max_core_threads <= free_cores) {
         return 1ULL;
     }
-    return max_core_threads - free_cores;
+    return std::min<size_t>(max_core_threads - free_cores, 4ULL);
 #else
-    return max_core_threads;
+    // Cap at 4 workers - more causes diminishing returns and CPU contention
+    return std::min<size_t>(max_core_threads, 4ULL);
 #endif
 }
 

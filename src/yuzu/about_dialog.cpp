@@ -13,10 +13,10 @@ AboutDialog::AboutDialog(QWidget* parent)
     const auto description = std::string(Common::g_scm_desc);
     const auto build_id = std::string(Common::g_build_id);
 
-    const auto yuzu_build = fmt::format("yuzu Development Build | {}-{}", branch_name, description);
+    const auto sirius_build = fmt::format("Sirius Development Build | {}-{}", branch_name, description);
     const auto override_build =
         fmt::format(fmt::runtime(std::string(Common::g_title_bar_format_idle)), build_id);
-    const auto yuzu_build_version = override_build.empty() ? yuzu_build : override_build;
+    const auto sirius_build_version = override_build.empty() ? sirius_build : override_build;
 
     ui->setupUi(this);
     // Try and request the icon from Qt theme (Linux?)
@@ -25,7 +25,7 @@ AboutDialog::AboutDialog(QWidget* parent)
         ui->labelLogo->setPixmap(yuzu_logo.pixmap(200));
     }
     ui->labelBuildInfo->setText(
-        ui->labelBuildInfo->text().arg(QString::fromStdString(yuzu_build_version),
+        ui->labelBuildInfo->text().arg(QString::fromStdString(sirius_build_version),
                                        QString::fromUtf8(Common::g_build_date).left(10)));
 }
 
