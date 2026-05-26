@@ -13,8 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
-          fetch-depth: 1
+          submodules: false
+
+      - name: Init submodules
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          git submodule sync --recursive
+          git submodule update --init --depth 1
 
       - name: Install Qt6
         shell: pwsh
