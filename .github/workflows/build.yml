@@ -15,7 +15,7 @@ jobs:
         shell: pwsh
         run: |
           $url = "https://x-access-token:$env:GITHUB_TOKEN@github.com/$env:GITHUB_REPOSITORY.git"
-          git clone --depth 1 $url "$env:GITHUB_WORKSPACE"
+          git clone $url "$env:GITHUB_WORKSPACE"
 
       - name: Init submodules
         shell: pwsh
@@ -23,7 +23,7 @@ jobs:
           $url = "https://x-access-token:$env:GITHUB_TOKEN@github.com/$env:GITHUB_REPOSITORY.git"
           git remote set-url origin $url
           git submodule sync --recursive
-          git submodule update --init --depth 1 2>&1 | Out-String
+          git submodule update --init --recursive 2>&1 | Out-String
 
       - name: Install Qt6
         shell: pwsh
