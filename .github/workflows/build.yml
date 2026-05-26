@@ -34,7 +34,7 @@ jobs:
           Add-Content $env:GITHUB_ENV "Qt6_DIR=C:\Qt\6.8.0\msvc2022_64\lib\cmake\Qt6"
 
       - name: Configure CMake
-        run: cmake -B build -S . -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Release -DYUZU_USE_BUNDLED_QT=OFF -DENABLE_QT6=ON -DYUZU_ENABLE_LTO=ON -DYUZU_TESTS=OFF -DYUZU_USE_BUNDLED_VCPKG=ON
+        run: cmake -B build -S . -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Release -DYUZU_USE_BUNDLED_QT=OFF -DENABLE_SDL2=OFF -DENABLE_QT6=ON -DYUZU_ENABLE_LTO=ON -DYUZU_TESTS=OFF -DYUZU_USE_BUNDLED_VCPKG=ON
 
       - name: Build
         run: cmake --build build --config Release -j $env:NUMBER_OF_PROCESSORS
