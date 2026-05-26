@@ -11,19 +11,22 @@ jobs:
     runs-on: windows-2022
 
     steps:
-      - name: Checkout
+      - name: Debug git access
         shell: pwsh
         run: |
-          $repo = "$env:GITHUB_SERVER_URL/$env:GITHUB_REPOSITORY"
-          git -c http.extraheader="AUTHORIZATION: bearer $env:GITHUB_TOKEN" clone --depth 1 $repo src
-          Move-Item -Path src\* -Destination . -Force
-          Remove-Item -Path src -Recurse -Force -ErrorAction SilentlyContinue
+          git --version
+          git config --list
+          $url = "https://x-access-token:$env:GITHUB_TOKEN@github.com/$env:GITHUB_REPOSITORY.git"
+          git ls-remote $url HEAD
 
-      - name: Init submodules
+      - name: Clone with git
         shell: pwsh
         run: |
-          git -c http.extraheader="AUTHORIZATION: bearer $env:GITHUB_TOKEN" submodule sync --recursive
-          git -c http.extraheader="AUTHORIZATION: bearer $env:GITHUB_TOKEN" submodule update --init --depth 1
+          Set-Location ..
+          Remove-Item -Path "$env:GITHUB_WORKSPACE" -Recurse -Force -ErrorAction SilentlyContinue
+          $url = "https://x-access-token:$env:GITHUB_TOKEN@github.com/$env:GITHUB_REPOSITORY.git"
+          git clone --depth 1 --recursive --shallow-submodules $url workspace
+          Get-ChildItem workspace
 
       - name: Install Qt6
         shell: pwsh
@@ -34,12 +37,14 @@ jobs:
           Add-Content $env:GITHUB_ENV "Qt6_DIR=C:\Qt\6.6.3\msvc2022_64\lib\cmake\Qt6"
 
       - name: Configure CMake
+        working-directory: workspace
         run: cmake -B build -S . -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Release -DYUZU_USE_BUNDLED_QT=OFF -DENABLE_QT6=ON -DYUZU_ENABLE_LTO=ON -DYUZU_TESTS=OFF -DYUZU_USE_BUNDLED_VCPKG=ON
 
       - name: Build
+        working-directory: workspace
         run: cmake --build build --config Release -j $env:NUMBER_OF_PROCESSORS
 
       - uses: actions/upload-artifact@v4
         with:
           name: Sirius-Windows-x64
-          path: build/bin/Release/
+          path: workspace/build/bin/Release/
