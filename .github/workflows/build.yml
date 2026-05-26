@@ -29,7 +29,7 @@ jobs:
         shell: pwsh
         run: |
           pip install aqtinstall -q 2>&1 | Out-Null
-          aqt install-qt windows desktop 6.8.0 win64_msvc2022_64 --outputdir C:\Qt -m qtmultimedia -q
+          aqt install-qt windows desktop 6.8.0 win64_msvc2022_64 --outputdir C:\Qt -m qtmultimedia
           Add-Content $env:GITHUB_PATH "C:\Qt\6.8.0\msvc2022_64\bin"
           Add-Content $env:GITHUB_ENV "Qt6_DIR=C:\Qt\6.8.0\msvc2022_64\lib\cmake\Qt6"
 
