@@ -11,16 +11,19 @@ jobs:
     runs-on: windows-2022
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: false
-
-      - name: Init submodules
-        continue-on-error: true
+      - name: Checkout
         shell: pwsh
         run: |
-          git submodule sync --recursive
-          git submodule update --init --depth 1
+          $repo = "$env:GITHUB_SERVER_URL/$env:GITHUB_REPOSITORY"
+          git -c http.extraheader="AUTHORIZATION: bearer $env:GITHUB_TOKEN" clone --depth 1 $repo src
+          Move-Item -Path src\* -Destination . -Force
+          Remove-Item -Path src -Recurse -Force -ErrorAction SilentlyContinue
+
+      - name: Init submodules
+        shell: pwsh
+        run: |
+          git -c http.extraheader="AUTHORIZATION: bearer $env:GITHUB_TOKEN" submodule sync --recursive
+          git -c http.extraheader="AUTHORIZATION: bearer $env:GITHUB_TOKEN" submodule update --init --depth 1
 
       - name: Install Qt6
         shell: pwsh
